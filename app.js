@@ -46,6 +46,13 @@ const indexRouter = require('./routes/index');
 
 app.use('/v1', indexRouter);
 
+app.ws('/', async() => {
+  ws.on('message', function(msg) {
+    console.log(msg);
+  });
+  console.log('socket', req.testing);
+});
+
 app.use((req, res) => {
   res.json({message: "route not found"});
 });
