@@ -1,0 +1,8 @@
+{
+  // 用Array列出要使用的presets (一組相關功能plugins的集合)
+  "presets": ["@babel/preset-env"],
+  // 用Array列出要使用的plugins
+  "plugins": [],
+  // 設定不執行compile的檔案，可以是正規表示法或是特定路徑
+  "ignore": []
+}
