@@ -1,5 +1,5 @@
 {
-  "name": "privacy-operation-system-api",
+  "name": "foodmate-ws-api",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -47,7 +47,6 @@
     "babel-core": "7.0.0-bridge.0",
     "dotenv": "^8.0.0",
     "enzyme": "^3.10.0",
-    "enzyme-adapter-react-16": "^1.14.0",
     "gulp": "^4.0.2",
     "gulp-scp2": "^0.2.0",
     "gulp-ssh": "^0.7.0",
