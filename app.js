@@ -43,13 +43,8 @@ app.use(passport.session());
 
 
 const indexRouter = require('./routes/index');
-const authRouter = require('./routes/authRouter');
-const backendUsersRouter = require('./routes/backendUsers');
 
 app.use('/v1', indexRouter);
-app.use('/v1/login', authRouter);
-app.use('/v1/auth', jwtAuthorizationMiddleware, indexRouter);
-app.use('/v1/backend_users', jwtAuthorizationMiddleware, backendUsersRouter);
 
 app.use((req, res) => {
   res.json({message: "route not found"});

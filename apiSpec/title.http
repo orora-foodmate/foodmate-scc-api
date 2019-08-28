@@ -1,41 +1,8 @@
 ### 
 @DEV = http://localhost:3001/v1/
-@domain = {{DEV}}
+@domain = {{LOCAL}}
 @contentType = application/json
 @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTksImlhdCI6MTU2MjEzODgwMH0.HSsUvaNkBdPaMssArfmwHrdVHeoaV8xRaqoRpA2wXg0
 
 ### Hello world
 GET {{domain}}
-
-### test auth
-GET {{domain}}auth
-Authorization: Bearer {{token}}
-
-### Login
-POST {{domain}}login
-Content-Type: {{contentType}}
-
-{
-  "employee": "test1@gmail.com",
-  "password": "a1234567"
-}
-
-#### 新增後台使用者
-POST {{domain}}backend_users
-Content-Type: {{contentType}}
-Authorization: Bearer {{token}}
-
-{
-  "employee": "test1@gmail.com",
-  "actid": 1
-}
-
-### 招募狀況
-
-### 兼職人員
-
-### 操作記錄
-
-### 帳號設置
-
-### 系統設定

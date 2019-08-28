@@ -1,6 +1,6 @@
 module.exports = {
   apps : [{
-    name: 'Privacy operation system api',
+    name: 'foodmate-ws-api',
     script: './bin/www',
 
     // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
