@@ -14,6 +14,8 @@ const {REDIS_PORT, REDIS_HOST, AUTH_SECRET} = process.env;
 
 const app = express();
 
+const expressWs = require('express-ws')(app);
+
 const RedisStore = connectRedis(session);
 app.set('trust proxy', 1) // trust first proxy
 
