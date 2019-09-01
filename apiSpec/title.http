@@ -1,8 +1,0 @@
-### 
-@DEV = http://localhost:3001/v1/
-@domain = {{LOCAL}}
-@contentType = application/json
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTksImlhdCI6MTU2MjEzODgwMH0.HSsUvaNkBdPaMssArfmwHrdVHeoaV8xRaqoRpA2wXg0
-
-### Hello world
-GET {{domain}}
