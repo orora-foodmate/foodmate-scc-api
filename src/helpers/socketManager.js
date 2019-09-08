@@ -139,7 +139,7 @@ const localMessageListener = (socket, io) => {
 
 const globalMessageListener = (socket) => {
 
-  socket.on('globalmessage', (req) => {\
+  socket.on('globalmessage', (req) => {
     io.emit('globalmessage', req.params);
   });
 }
