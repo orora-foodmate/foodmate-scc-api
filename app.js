@@ -18,7 +18,7 @@ const roomRouter = require('./src/routes/roomRouter');
 app.use('/rooms', roomRouter);
 
 app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/index.html');
+  res.status(200).json({success: true});
 });
 
 initialSocketIO(http).then(({ io, socket }) => {
