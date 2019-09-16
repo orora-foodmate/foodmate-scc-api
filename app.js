@@ -28,8 +28,10 @@ initialSocketIO(http).then(({ io, socket }) => {
   globalMessageListener(socket);
 }).catch(error => { console.log('error: ', error) })
 
-http.listen(process.env.PORT || 3000, function () {
-  console.log('listening on *:3000');
+const {PORT = 3000} = process.env;
+
+http.listen(PORT, function () {
+  console.log(`listening on *:${PORT}`);
 });
 
 //Nodejs 奇怪的錯誤防止Process 死掉
