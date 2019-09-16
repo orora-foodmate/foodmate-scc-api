@@ -10,6 +10,7 @@ module.exports = {
     watch: true,
     max_memory_restart: '1G',
     env: {
+      PORT: 13333,
       NODE_ENV: 'production'
     }
   }]
