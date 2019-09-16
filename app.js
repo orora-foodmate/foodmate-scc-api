@@ -30,7 +30,7 @@ initialSocketIO(http).then(({ io, socket }) => {
 
 const {PORT = 3000} = process.env;
 
-http.listen(PORT, function () {
+http.listen(PORT, "0.0.0.0", function () {
   console.log(`listening on *:${PORT}`);
 });
 
