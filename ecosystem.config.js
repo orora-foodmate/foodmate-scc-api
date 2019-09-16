@@ -1,7 +1,7 @@
 module.exports = {
   apps : [{
     name: 'foodmate-ws-api',
-    script: './app',
+    script: './app.js',
 
     // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
     args: 'one two',
