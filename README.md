@@ -1,5 +1,11 @@
 # SocketIO
 
+## Build Status
+
+[![Build Status](https://cloud.drone.io/api/badges/orora-foodmate/foodmate-ws-api/status.svg)](https://cloud.drone.io/orora-foodmate/foodmate-ws-api)
+
+## Information
+
 Demo Server: http://45.33.73.179:3000
 
 Extends From [github](https://github.com/aszx87410/nodejs_simple_chatroom)
