@@ -12,6 +12,7 @@ steps:
     commands:
       - pwd
       - ls -al
+      - ping foodmate-ws-api.tomas.website
 
   - name: scp files
     image: appleboy/drone-scp
