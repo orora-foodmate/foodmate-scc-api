@@ -17,6 +17,8 @@ steps:
         from_secret: ssh_username
       ssh_password: 
         from_secret: ssh_password
+      password: 
+        from_secret: ssh_password
       port: 22
       target: /root
       when:
@@ -34,6 +36,8 @@ steps:
       ssh_username:
         from_secret: ssh_username
       ssh_password: 
+        from_secret: ssh_password
+      password: 
         from_secret: ssh_password
       port: 22
       script:
