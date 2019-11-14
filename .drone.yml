@@ -29,11 +29,11 @@ steps:
       script:
         - echo "Hello World"
         - echo pwd
-      # target: /var/www/html/foodmate-ws-api
+      target: /var/www/html/foodmate-ws-api
       when:
         branch: master
-      # source:
-      #   - /tmp/008887463/7H8fCcf9UV.tar
+      source:
+        - /drone/src
 
   # - name: ssh commands
   #   image: appleboy/drone-ssh
