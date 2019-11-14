@@ -34,11 +34,7 @@ steps:
         branch: master
       # source:
       #   - /tmp/008887463/7H8fCcf9UV.tar
-  - name: test2
-      image: node
-      commands:
-        - pwd
-        - ls -al
+
   # - name: ssh commands
   #   image: appleboy/drone-ssh
   #   settings:
