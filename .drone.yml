@@ -12,7 +12,6 @@ steps:
     commands:
       - pwd
       - ls -al
-      - ping foodmate-ws-api.tomas.website
 
   - name: scp files
     image: appleboy/drone-scp
@@ -27,7 +26,7 @@ steps:
       password: 
         from_secret: ssh_password
       port: 22
-      script:
+      commands:
         - echo "Hello World"
         - echo pwd
       target: /var/www/html/foodmate-ws-api
