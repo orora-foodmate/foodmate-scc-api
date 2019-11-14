@@ -20,7 +20,10 @@ steps:
       password: 
         from_secret: ssh_password
       port: 22
-      target: /var/www/html/orora-foodmate/foodmate-ws-api
+      script:
+        - echo "Hello World"
+        - echo pwd
+      target: /var/www/html/foodmate-ws-api
       when:
         branch: master
       source:
