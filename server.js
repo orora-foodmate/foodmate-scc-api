@@ -22,6 +22,7 @@ var workerClusterControllerPath = argv.wcc || process.env.SOCKETCLUSTER_WORKERCL
 var environment = process.env.ENV || 'dev';
 
 var options = {
+  
   workers: Number(argv.w) || Number(process.env.SOCKETCLUSTER_WORKERS) || 1,
   brokers: Number(argv.b) || Number(process.env.SOCKETCLUSTER_BROKERS) || 1,
   port: Number(argv.p) || Number(process.env.SOCKETCLUSTER_PORT) || 8000,
@@ -45,7 +46,8 @@ var options = {
   crashWorkerOnError: argv['auto-reboot'] != false,
   // If using nodemon, set this to true, and make sure that environment is 'dev'.
   killMasterOnSignal: false,
-  environment: environment
+  environment: environment,
+  logLevel: 2,
 };
 
 var bootTimeout = Number(process.env.SOCKETCLUSTER_CONTROLLER_BOOT_TIMEOUT) || 10000;
