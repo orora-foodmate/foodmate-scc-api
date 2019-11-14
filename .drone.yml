@@ -1,27 +1,38 @@
-pipeline:
-  scp:
+---
+kind: pipeline
+type: docker
+name: linux-amd64
+
+platform:
+  arch: amd64
+  os: linux
+
+steps:
+  - name: scp files
     image: appleboy/drone-scp
     pull: true
-    host: 
-      - foodmate-ws-api.tomas.website
-    port: 22
-    username: root
-    user: root
-    secrets: [ ssh_password ]
-    target: /root
-    source:
-      - /drone/src/github.com/orora-foodmate/foodmate-ws-api
+    settings:
+      host: 
+        - foodmate-ws-api.tomas.website
+      username: root
+      secrets: [ ssh_password ]
+      port: 22
+      target: /root
+      when:
+        branch: master
+      source:
+        - /drone/src/github.com/orora-foodmate/foodmate-ws-api
+
+- name: ssh commands
+  image: appleboy/drone-ssh
+  settings:
     when:
       branch: master
-
-  ssh:
-    image: appleboy/drone-ssh
     host: 
       - foodmate-ws-api.tomas.website
     username: root
-    user: root
     secrets: [ ssh_password ]
-    command_timeout: 600
+    port: 22
     script:
       - . /root/.nvm/nvm.sh && nvm use 10.9.0
       - mkdir -p /var/www/html/orora-foodmate/foodmate-ws-api
@@ -30,6 +41,3 @@ pipeline:
       - cp -a ./* /var/www/html/orora-foodmate/foodmate-ws-api
       - cd /root
       - rm -rf /root/drone
-    when:
-      branch: master
-      
