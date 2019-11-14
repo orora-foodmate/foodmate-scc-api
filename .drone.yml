@@ -22,21 +22,21 @@ steps:
       source:
         - /drone/src/github.com/orora-foodmate/foodmate-ws-api
 
-- name: ssh commands
-  image: appleboy/drone-ssh
-  settings:
-    when:
-      branch: master
-    host: 
-      - foodmate-ws-api.tomas.website
-    username: root
-    secrets: [ ssh_password ]
-    port: 22
-    script:
-      - . /root/.nvm/nvm.sh && nvm use 10.9.0
-      - mkdir -p /var/www/html/orora-foodmate/foodmate-ws-api
-      - cd /root/drone/src/github.com/orora-foodmate/foodmate-ws-api
-      - yarn install
-      - cp -a ./* /var/www/html/orora-foodmate/foodmate-ws-api
-      - cd /root
-      - rm -rf /root/drone
+  - name: ssh commands
+    image: appleboy/drone-ssh
+    settings:
+      when:
+        branch: master
+      host: 
+        - foodmate-ws-api.tomas.website
+      username: root
+      secrets: [ ssh_password ]
+      port: 22
+      script:
+        - . /root/.nvm/nvm.sh && nvm use 10.9.0
+        - mkdir -p /var/www/html/orora-foodmate/foodmate-ws-api
+        - cd /root/drone/src/github.com/orora-foodmate/foodmate-ws-api
+        - yarn install
+        - cp -a ./* /var/www/html/orora-foodmate/foodmate-ws-api
+        - cd /root
+        - rm -rf /root/drone
