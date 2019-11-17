@@ -10,8 +10,8 @@ steps:
   - name: test
     image: node
     commands:
-      - pwd
-      - ls -al
+      - rm -rf ./node_modules
+      - zip -r foodmate-ws.zip ./*
 
   - name: scp files
     image: appleboy/drone-scp
@@ -26,14 +26,11 @@ steps:
       password: 
         from_secret: ssh_password
       port: 22
-      commands:
-        - echo "Hello World"
-        - echo pwd
-      target: /var/www/html/foodmate-ws-api
+      target: ~/
       when:
         branch: master
       source:
-        - /drone/src
+        - ./foodmate.zip
 
   # - name: ssh commands
   #   image: appleboy/drone-ssh
