@@ -19,7 +19,7 @@ steps:
     pull: true
     settings:
       host: 
-        - foodmate-ws-api.tomas.website
+        from_secret: dev-host
       ssh_username:
         from_secret: ssh_username
       ssh_password: 
