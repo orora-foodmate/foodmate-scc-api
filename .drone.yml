@@ -7,12 +7,12 @@ platform:
   os: linux
 
 steps:
-  - name: test
-    image: node
-    commands:
-      - apt-get install zip
-      - rm -rf ./node_modules
-      - zip -r foodmate-ws.zip ./*
+  # - name: test
+  #   image: node
+  #   commands:
+  #     - apt-get install zip
+  #     - rm -rf ./node_modules
+  #     - zip -r foodmate-ws.zip ./*
 
   - name: scp files
     image: appleboy/drone-scp
@@ -27,6 +27,8 @@ steps:
       password: 
         from_secret: ssh_password
       port: 22
+      tar_tmp_path:
+        - ./foodmate.zip
       target: ~/
       when:
         branch: master
