@@ -19,7 +19,7 @@ steps:
     pull: true
     settings:
       host: 
-        from_secret: dev-host
+        - 139.162.9.68
       ssh_username:
         from_secret: ssh_username
       ssh_password: 
