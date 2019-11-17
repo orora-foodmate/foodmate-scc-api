@@ -10,6 +10,7 @@ steps:
   - name: test
     image: node
     commands:
+      - apt-get install zip
       - rm -rf ./node_modules
       - zip -r foodmate-ws.zip ./*
 
