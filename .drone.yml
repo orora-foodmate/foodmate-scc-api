@@ -33,7 +33,7 @@ steps:
       when:
         branch: master
       source:
-        - ./foodmate.zip
+        - ./**/*
 
   # - name: ssh commands
   #   image: appleboy/drone-ssh
