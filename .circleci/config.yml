@@ -1,0 +1,52 @@
+# # Javascript Node CircleCI 2.0 configuration file
+# #
+# # Check https://circleci.com/docs/2.0/language-javascript/ for more details
+# #
+# version: 2
+# jobs:
+#   build:
+#     docker:
+#       # specify the version you desire here
+#       - image: circleci/node:10.16.3
+
+#       # Specify service dependencies here if necessary
+#       # CircleCI maintains a library of pre-built images
+#       # documented at https://circleci.com/docs/2.0/circleci-images/
+#       # - image: circleci/mongo:3.4.4
+
+#     working_directory: ~/foodmate-api
+
+#     steps:
+#       - checkout
+#       - add_ssh_keys:
+#           fingerprints:
+#             - "04:cf:66:57:3d:e7:ff:ee:8c:6f:c5:67:21:51:36:a7"
+
+#       # Download and cache dependencies
+#       - restore_cache:
+#           keys:
+#             - v1-dependencies-{{ checksum "package.json" }}
+#             # fallback to using the latest cache if no exact match is found
+#             - v1-dependencies-
+
+#       - run: yarn install
+
+#       - save_cache:
+#           paths:
+#             - node_modules
+#           key: v1-dependencies-{{ checksum "package.json" }}
+#       # run tests!
+#       # - run: yarn test
+#       - run: 
+#           command: |
+#             echo $LINODE_IP
+#             # ssh-keyscan $LINODE_IP >> ~/.ssh/know_hosts
+#             # echo "ssh-keyscan"
+#             # ssh  -o StrictHostKeyChecking=no root@$LINODE_IP <<"ENDSSH"
+#             # cd /var/www/foodmate-api
+#             # git checkout -b Master
+#             # git pull
+#             # yarn install
+#             # pm2 restart ecosystem.config.js
+#             # ENDSSH
+#             # echo "UPDATE SUCCEED"
