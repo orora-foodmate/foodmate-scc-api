@@ -1,0 +1,9 @@
+pipeline:
+  buld_and_deploy:
+    image: node
+    pull: true
+    commands:
+      - pwd
+      - yarn install
+    when:
+      branch: master
