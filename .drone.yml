@@ -3,7 +3,8 @@ pipeline:
     image: node
     pull: true
     commands:
-      - pwd
       - yarn install
+      - gulp
     when:
-      branch: master
+      event: [ pull_request ]
+      status: success
