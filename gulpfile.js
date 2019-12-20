@@ -14,7 +14,7 @@ const connectPM2 = () => {
 };
 
 const getProcesses = () => {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     pm2.list((error, processes) => {
       if(error) return reject(error);
       return resolve(processes);
@@ -23,7 +23,7 @@ const getProcesses = () => {
 };
 
 const getProcessData = (name) => {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     pm2.list((error, processes) => {
       if(error) return reject(error);
       const processData = processes.find(p => p.name === name);
