@@ -6,5 +6,5 @@ pipeline:
       - yarn install
       - gulp
     when:
-      event: [ pull_request ]
+      event: [ push ]
       status: success
