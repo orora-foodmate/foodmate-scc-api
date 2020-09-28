@@ -7,6 +7,8 @@ const path = require('path');
 const morgan = require('morgan');
 const uuid = require('uuid');
 const sccBrokerClient = require('scc-broker-client');
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -51,21 +53,32 @@ if (ENVIRONMENT === 'dev') {
 }
 expressApp.use(serveStatic(path.resolve(__dirname, 'public')));
 
-// Add GET /health-check express route
-expressApp.get('/health-check', async (req, res, next) => {
+expressApp.use(cors());
+expressApp.use(express.json());
+expressApp.use(express.urlencoded({ extended: false }));
+expressApp.use(cookieParser());
+
+const tokenVerifyMiddleware =  async (req, res, next) => {
   try {
     const authorization = req.headers.authorization;
     const token = authorization.split(' ')[1];
-    console.log('agServer.signatureKey', agServer.signatureKey)
     const data = await agServer.auth.verifyToken(token, agServer.signatureKey)
-    console.log('data', data)
     next();
   } catch(error) {
-  console.log('error', error)
-    next();
+    return res.status(401).json({
+      success: false,
+      data: {
+        message: 'token 驗證錯誤'
+      }
+    })
   }
   
-}, (req, res) => {
+}
+const userRoute = require('./routes/userRoute');
+
+expressApp.use('/users', tokenVerifyMiddleware, userRoute);
+// Add GET /health-check express route
+expressApp.get('/health-check',tokenVerifyMiddleware, (req, res) => {
   res.status(200).send('OK');
 });
 

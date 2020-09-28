@@ -1,4 +1,7 @@
 const mongoose = require('mongoose');
+const isEmpty = require('lodash/isEmpty');
+const { saltHashPassword } = require('../helpers/utils');
+
 const { Schema } = mongoose;
 const {
   MONGO_URI,
@@ -17,14 +20,23 @@ const userSchema = new Schema({
   },
   avatar: {
     type: String,
+    default: "http://clipart-library.com/images/6cpoy78ri.png",
+  },
+  creator: {
+    type: Schema.Types.ObjectId,
+    ref: 'users' ,
+    default: null
+  },
+  password: {
+    type: String,
     required: true,
   },
   hashPassword: {
     type: String,
-    required: true,
   },
   account: {
     type: String,
+    unique: true,
     required: true,
   },
   createAt: {
@@ -35,6 +47,17 @@ const userSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+});
+
+userSchema.pre('save',  function(next) {
+  console.log('AL: next', next)
+  let user = this;
+
+  // only hash the password if it has been modified (or is new)
+  if(isEmpty(user.password)) throw new Error('password is required');
+
+  user.hashPassword  = saltHashPassword(user.password);
+  next();
 });
 
 module.exports.userModel = mongoose.model('users', userSchema);
