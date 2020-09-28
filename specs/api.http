@@ -1,0 +1,21 @@
+@DEV = http://localhost:8000/
+
+@domain = {{DEV}}
+@jsonContentType = application/json
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhQGJiLmNjIiwiaWF0IjoxNTk5MjkyNjAxfQ.CDtkplX_REdPY5LZOc9Vfr_97UAx-22J3RqLj3HGkBY
+
+### public route
+GET {{domain}}health-check
+Content-Type: {{jsonContentType}}
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJvYiIsImxhbmd1YWdlIjoiRW5nbGlzaCIsImNvbXBhbnkiOiJHb29nbGUiLCJncm91cHMiOlsiZW5naW5lZXJpbmciLCJzY2llbmNlIiwibWF0aGVtYXRpY3MiXSwiaWF0IjoxNjAxMjgyMDc2fQ.wzw1296YAqXukt5unvKNY3pflvVAwbp4VnipTxTLOsw
+
+### Login username:password
+POST {{domain}}login
+Content-Type: {{jsonContentType}}
+
+{
+  "email": "a@bb.cc",
+  "password": "a12345678"
+}
+
+###

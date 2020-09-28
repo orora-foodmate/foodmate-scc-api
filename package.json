@@ -1,22 +1,27 @@
 {
-  "name": "foodmate-ws-api",
+  "name": "socketcluster-sample",
+  "description": "A sample SocketCluster app",
   "version": "1.0.0",
-  "description": "foodmate ws micro service",
-  "main": "index.js",
-  "repository": "git@github.com:horsekitlin/foodmate-ws-api.git",
-  "author": "林暐秦（Tomas） <tomas.lin@velocitylight.net>",
-  "license": "MIT",
-  "private": true,
+  "contributors": [
+    {
+      "name": "Jonathan Gros-Dubois",
+      "email": "grosjona@yahoo.com.au"
+    }
+  ],
   "dependencies": {
-    "express": "4.16.4",
-    "minimist": "1.2.0",
-    "morgan": "^1.9.1",
-    "sc-framework-health-check": "^2.0.0",
-    "sc-hot-reboot": "^1.0.0",
-    "scc-broker-client": "^6.1.0",
-    "serve-static": "1.13.2",
-    "socketcluster": "^14.4.1",
-    "socketcluster-client": "^14.3.1"
+    "connect": "^3.6.6",
+    "dotenv": "^8.2.0",
+    "eetase": "^4.0.0",
+    "express": "^4.16.3",
+    "mongoose": "^5.10.7",
+    "morgan": "^1.7.0",
+    "nodemon": "^1.18.9",
+    "sc-errors": "^2.0.1",
+    "scc-broker-client": "^8.0.0",
+    "serve-static": "^1.13.2",
+    "socketcluster-client": "^16.0.1",
+    "socketcluster-server": "^16.0.0",
+    "uuid": "^3.3.2"
   },
   "keywords": [
     "websocket",
@@ -28,6 +33,7 @@
   "readmeFilename": "README.md",
   "scripts": {
     "start": "node server.js",
-    "start:docker": "node dockerwait.js && node ${SOCKETCLUSTER_MASTER_CONTROLLER:-server.js}"
+    "start:watch": "./node_modules/nodemon/bin/nodemon.js server.js",
+    "start:docker": "./node_modules/nodemon/bin/nodemon.js /usr/src/app/server.js"
   }
 }
