@@ -9,6 +9,7 @@ const uuid = require('uuid');
 const sccBrokerClient = require('scc-broker-client');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const pick = require('lodash/pick');
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -75,6 +76,8 @@ const tokenVerifyMiddleware =  async (req, res, next) => {
   
 }
 const userRoute = require('./routes/userRoute');
+const { userModel } = require('./models');
+const { saltHashPassword } = require('./helpers/utils');
 
 expressApp.use('/users', tokenVerifyMiddleware, userRoute);
 // Add GET /health-check express route
@@ -83,16 +86,29 @@ expressApp.get('/health-check',tokenVerifyMiddleware, (req, res) => {
 });
 
 expressApp.post('/login', async (req, res) => {
-  const myTokenData = {
-    username: 'bob',
-    language: 'English',
-    company: 'Google',
-    groups: ['engineering', 'science', 'mathematics']
-  };
+  const {account, password} = req.body;
+  const user = await userModel.findOne({account});
+  const hashPassword = saltHashPassword(password, process.env.SALT_SECRET);
+
+  if(user.hashPassword !== hashPassword) {
+    return res.status(401).json({
+      success: false,
+      data: {
+        message: 'authorization fail'
+      }
+    });
+  }
+
+  console.log("user", user)
+  const myTokenData = pick(user, ['_id', 'account', 'avatar', 'name']);
   const signedTokenString = await agServer.auth.signToken(myTokenData, agServer.signatureKey);
 
   res.status(200).json({
-    token: signedTokenString
+    success: true,
+    data: {
+      ...myTokenData,
+      token: signedTokenString,
+    }
   });
 });
 

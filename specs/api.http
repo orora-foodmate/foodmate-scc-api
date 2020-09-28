@@ -14,7 +14,7 @@ POST {{domain}}login
 Content-Type: {{jsonContentType}}
 
 {
-  "email": "a@bb.cc",
+  "account": "horsekit1982@gmail.com",
   "password": "a12345678"
 }
 
