@@ -39,7 +39,7 @@ router.post('/', async (req, res, next) => {
           name: user.name,
           account: user.account
         }
-      })
+      });
     })
   } catch (error) {
     next(error);

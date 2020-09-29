@@ -63,7 +63,8 @@ const tokenVerifyMiddleware =  async (req, res, next) => {
   try {
     const authorization = req.headers.authorization;
     const token = authorization.split(' ')[1];
-    const data = await agServer.auth.verifyToken(token, agServer.signatureKey)
+    const user = await agServer.auth.verifyToken(token, agServer.signatureKey)
+    req.user = user;
     next();
   } catch(error) {
     return res.status(401).json({
@@ -75,11 +76,14 @@ const tokenVerifyMiddleware =  async (req, res, next) => {
   }
   
 }
+
 const userRoute = require('./routes/userRoute');
+const friendRoute = require('./routes/friendRoute');
 const { userModel } = require('./models');
 const { saltHashPassword } = require('./helpers/utils');
 
 expressApp.use('/users', tokenVerifyMiddleware, userRoute);
+expressApp.use('/friends', tokenVerifyMiddleware, friendRoute);
 // Add GET /health-check express route
 expressApp.get('/health-check',tokenVerifyMiddleware, (req, res) => {
   res.status(200).send('OK');
@@ -99,7 +103,6 @@ expressApp.post('/login', async (req, res) => {
     });
   }
 
-  console.log("user", user)
   const myTokenData = pick(user, ['_id', 'account', 'avatar', 'name']);
   const signedTokenString = await agServer.auth.signToken(myTokenData, agServer.signatureKey);
 

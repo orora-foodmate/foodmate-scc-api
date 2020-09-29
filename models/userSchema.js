@@ -41,13 +41,18 @@ const userSchema = new Schema({
 });
 
 userSchema.pre('save',  function(next) {
-  console.log('AL: next', next)
   let user = this;
 
   // only hash the password if it has been modified (or is new)
   if(isEmpty(user.password)) throw new Error('password is required');
 
   user.hashPassword  = saltHashPassword(user.password);
+  next();
+});
+
+userSchema.pre('save',  function(next) {
+  let user = this;
+  user.updateAt = Date.now();
   next();
 });
 

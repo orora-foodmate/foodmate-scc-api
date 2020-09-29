@@ -2,12 +2,14 @@
 
 @domain = {{DEV}}
 @jsonContentType = application/json
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhQGJiLmNjIiwiaWF0IjoxNTk5MjkyNjAxfQ.CDtkplX_REdPY5LZOc9Vfr_97UAx-22J3RqLj3HGkBY
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjcyOWIyZWJjOWU5NThkMjcyYTZhMDUiLCJhY2NvdW50IjoiaG9yc2VraXQxOTgyQGdtYWlsLmNvbSIsImF2YXRhciI6Imh0dHA6Ly9jbGlwYXJ0LWxpYnJhcnkuY29tL2ltYWdlcy82Y3BveTc4cmkucG5nIiwibmFtZSI6InRvbWFzIiwiaWF0IjoxNjAxMzUxMTY1fQ.HAa1hXKa1-e1pSHqBcs1YFa350590zAEha3EVQEy7Ik
+@userId = 5f729b2ebc9e958d272a6a04
+@friendId = 5f72ae4b8651879982bfd96e
 
 ### public route
 GET {{domain}}health-check
 Content-Type: {{jsonContentType}}
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJvYiIsImxhbmd1YWdlIjoiRW5nbGlzaCIsImNvbXBhbnkiOiJHb29nbGUiLCJncm91cHMiOlsiZW5naW5lZXJpbmciLCJzY2llbmNlIiwibWF0aGVtYXRpY3MiXSwiaWF0IjoxNjAxMjgyMDc2fQ.wzw1296YAqXukt5unvKNY3pflvVAwbp4VnipTxTLOsw
+Authorization: Bearer {{token}}
 
 ### Login username:password
 POST {{domain}}login
@@ -22,18 +24,24 @@ Content-Type: {{jsonContentType}}
 
 POST {{domain}}users
 Content-Type: {{jsonContentType}}
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJvYiIsImxhbmd1YWdlIjoiRW5nbGlzaCIsImNvbXBhbnkiOiJHb29nbGUiLCJncm91cHMiOlsiZW5naW5lZXJpbmciLCJzY2llbmNlIiwibWF0aGVtYXRpY3MiXSwiaWF0IjoxNjAxMjgyMDc2fQ.wzw1296YAqXukt5unvKNY3pflvVAwbp4VnipTxTLOsw
+Authorization: Bearer {{token}}
 
 {
-  "name": "tomas",
+  "name": "tomas2",
   "password": "a12345678",
-  "account": "horsekit1982@gmail.com"
+  "account": "thomaslin0710@gmail.com"
 }
 
 ### get user by id
-GET {{domain}}users/5f729b2ebc9e958d272a6a04
+GET {{domain}}users/{{userId}}
 Content-Type: {{jsonContentType}}
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJvYiIsImxhbmd1YWdlIjoiRW5nbGlzaCIsImNvbXBhbnkiOiJHb29nbGUiLCJncm91cHMiOlsiZW5naW5lZXJpbmciLCJzY2llbmNlIiwibWF0aGVtYXRpY3MiXSwiaWF0IjoxNjAxMjgyMDc2fQ.wzw1296YAqXukt5unvKNY3pflvVAwbp4VnipTxTLOsw
+Authorization: Bearer {{token}}
+
+### invite user
+
+POST {{domain}}friends/invite/{{friendId}}
+Content-Type: {{jsonContentType}}
+Authorization: Bearer {{token}}
 
 
 ###
