@@ -30,4 +30,10 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJvY
   "account": "horsekit1982@gmail.com"
 }
 
+### get user by id
+GET {{domain}}users/5f729b2ebc9e958d272a6a0
+Content-Type: {{jsonContentType}}
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJvYiIsImxhbmd1YWdlIjoiRW5nbGlzaCIsImNvbXBhbnkiOiJHb29nbGUiLCJncm91cHMiOlsiZW5naW5lZXJpbmciLCJzY2llbmNlIiwibWF0aGVtYXRpY3MiXSwiaWF0IjoxNjAxMjgyMDc2fQ.wzw1296YAqXukt5unvKNY3pflvVAwbp4VnipTxTLOsw
+
+
 ###

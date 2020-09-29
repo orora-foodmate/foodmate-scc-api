@@ -1,23 +1,37 @@
 const express = require('express');
-const {userModel} = require('../models');
+const { userModel } = require('../models');
 const router = express.Router();
+
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await userModel.findById(id, {password: -1, hashPassword: -1});
+    return res.status(200).json({
+      success: true,
+      data: user
+    });
+  } catch(error) {
+    return res.status(200).json({
+      success: true,
+      data: null
+    });
+  }
+  
+});
 
 router.post('/', async (req, res, next) => {
   try {
-    const {name, password, account } = req.body;
-    console.log(1);
+    const { name, password, account } = req.body;
     const user = new userModel({
       name,
       password,
       account
     });
-    console.log(2);
     user.save((error) => {
-      console.log(3);
-      if(error) {
-        return res.status(500).json({success: false, data: { message: error.message}});
+      if (error) {
+        return res.status(500).json({ success: false, data: { message: error.message } });
       }
-      console.log(4);
+
       return res.status(200).json({
         success: true,
         data: {
