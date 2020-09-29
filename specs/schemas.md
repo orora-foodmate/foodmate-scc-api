@@ -23,6 +23,7 @@ const room = {
   createAt: date,
   updateAt: date,
   status: number, // enums: [0: 未啟用, 1: 啟用, 2: 凍結, 3: 刪除]
+  type: number, // enums: [0: friend, 1: group]
 }
 ```
 

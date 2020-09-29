@@ -1,19 +1,13 @@
 const express = require('express');
 const { friendModel } = require('../models');
 const isEmpty = require('lodash/isEmpty');
+const { approveFriendTransaction } = require('../helpers/transactions');
 const router = express.Router();
 
 router.post('/approve/:friendId', async (req, res) => {
   const { friendId } = req.params;
   try {
-    const oldRecord = await friendModel.findById(friendId);
-
-    if (isEmpty(oldRecord) || oldRecord.status !== 1) {
-      return res.status(500).json({ success: false, data: { message: '狀態錯誤' } });
-    }
-
-    oldRecord.status = 2;
-    const result = await oldRecord.save();
+    const result = await approveFriendTransaction(friendId);
 
     return res.status(200).json({
       success: true,

@@ -2,9 +2,9 @@
 
 @domain = {{DEV}}
 @jsonContentType = application/json
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjcyOWIyZWJjOWU5NThkMjcyYTZhMDUiLCJhY2NvdW50IjoiaG9yc2VraXQxOTgyQGdtYWlsLmNvbSIsImF2YXRhciI6Imh0dHA6Ly9jbGlwYXJ0LWxpYnJhcnkuY29tL2ltYWdlcy82Y3BveTc4cmkucG5nIiwibmFtZSI6InRvbWFzIiwiaWF0IjoxNjAxMzUxMTY1fQ.HAa1hXKa1-e1pSHqBcs1YFa350590zAEha3EVQEy7Ik
-@userId = 5f729b2ebc9e958d272a6a04
-@friendId = 5f72ae4b8651879982bfd96e
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjczMDM4YWEzODU4ZmIxOTUzM2YxMTMiLCJhY2NvdW50IjoiaG9yc2VraXQxOTgyQGdtYWlsLmNvbSIsImF2YXRhciI6Imh0dHA6Ly9jbGlwYXJ0LWxpYnJhcnkuY29tL2ltYWdlcy82Y3BveTc4cmkucG5nIiwibmFtZSI6InRvbWFzMSIsImlhdCI6MTYwMTM3MzEwMH0.mylhPzodeFzPT7uIp8XGNNnGMSQYurHKKl-kxT5TFVw
+@userId = 5f73037ca3858fb19533f111
+@friendId = 5f73038aa3858fb19533f113
 
 ### public route
 GET {{domain}}health-check
@@ -21,15 +21,14 @@ Content-Type: {{jsonContentType}}
 }
 
 ### register user
-
 POST {{domain}}users
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
 {
-  "name": "tomas2",
+  "name": "tomas1",
   "password": "a12345678",
-  "account": "thomaslin0710@gmail.com"
+  "account": "horsekit1982@gmail.com"
 }
 
 ### get user by id
@@ -43,12 +42,12 @@ Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
 ### reject user
-POST {{domain}}friends/reject/5f72e63822c6f7a1ea94fe82
+POST {{domain}}friends/reject/5f73071f6d23e3bb7d3cc6a5
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
 ### approve user
-POST {{domain}}friends/approve/5f72e63822c6f7a1ea94fe82
+POST {{domain}}friends/approve/5f73071f6d23e3bb7d3cc6a5
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 

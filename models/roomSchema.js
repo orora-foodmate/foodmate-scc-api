@@ -27,7 +27,12 @@ const roomSchema = new Schema({
   },
   status: {
     type: Number,
-    enum: [0, 1, 2],
+    enum: [0, 1, 2, 3],
+    default: 0
+  },
+  type: {
+    type: Number,
+    enum: [0, 1],
     default: 0
   },
 });
