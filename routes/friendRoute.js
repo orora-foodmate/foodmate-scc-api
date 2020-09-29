@@ -3,23 +3,45 @@ const { friendModel } = require('../models');
 const isEmpty = require('lodash/isEmpty');
 const router = express.Router();
 
+router.post('/approve/:friendId', async (req, res) => {
+  const { friendId } = req.params;
+  try {
+    const oldRecord = await friendModel.findById(friendId);
+
+    if (isEmpty(oldRecord) || oldRecord.status !== 1) {
+      return res.status(500).json({ success: false, data: { message: '狀態錯誤' } });
+    }
+
+    oldRecord.status = 2;
+    const result = await oldRecord.save();
+
+    return res.status(200).json({
+      success: true,
+      data: result
+    });
+  } catch(error) {
+    return res.status(500).json({
+      success: false,
+      data: { message: error.message}
+    });
+  }
+});
+
 router.post('/reject/:friendId', async (req, res) => {
   const { friendId } = req.params;
-  const creator = req.user._id;
-  const users = [friendId, creator];
-
   try {
-    const oldRecord = await friendModel.findOne({ users, creator });
+    const oldRecord = await friendModel.findById(friendId);
     if (isEmpty(oldRecord) || oldRecord.status !== 1) {
       return res.status(500).json({ success: false, data: { message: '狀態錯誤' } });
     }
 
     oldRecord.status = 0;
     const result = await oldRecord.save();
+
     return res.status(200).json({
       success: true,
       data: result
-    })
+    });
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -28,15 +50,15 @@ router.post('/reject/:friendId', async (req, res) => {
   }
 });
 
-router.post('/invite/:friendId', async (req, res) => {
-  const { friendId } = req.params;
+router.post('/invite/:userId', async (req, res) => {
+  const { userId } = req.params;
   const creator = req.user._id;
-  const users = [friendId, creator];
+  const users = [userId, creator];
 
-  const oldRecord = await friendModel.findOne({ users, creator });
+  const oldRecord = await friendModel.findOne({ users });
 
   if (isEmpty(oldRecord)) {
-    const friend = await friendModel.insert({
+    const friend = await friendModel.create({
       users,
       creator,
       status: 1

@@ -1,16 +1,22 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const friendSchema = new Schema({
-  users: [{
-    type: Schema.Types.ObjectId,
-    ref: 'users',
-  }],
+const roomSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
   creator: {
     type: Schema.Types.ObjectId,
-    ref: 'users',
-    required: true
+    ref: 'users' ,
+    required: true,
   },
+  users: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'users',
+    }
+  ],
   createAt: {
     type: Date,
     default: Date.now,
@@ -26,10 +32,11 @@ const friendSchema = new Schema({
   },
 });
 
-friendSchema.pre('save',  function(next) {
+roomSchema.pre('save',  function(next) {
   let user = this;
   user.updateAt = Date.now();
   next();
 });
 
-module.exports = friendSchema;
+module.exports = roomSchema;
+

@@ -43,7 +43,12 @@ Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
 ### reject user
-POST {{domain}}friends/reject/{{friendId}}
+POST {{domain}}friends/reject/5f72e63822c6f7a1ea94fe82
+Content-Type: {{jsonContentType}}
+Authorization: Bearer {{token}}
+
+### approve user
+POST {{domain}}friends/approve/5f72e63822c6f7a1ea94fe82
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
