@@ -4,7 +4,6 @@ const isEmpty = require('lodash/isEmpty');
 const router = express.Router();
 
 router.post('/invite/:friendId', async (req, res) => {
-  console.log('req.user', req.user)
   const { friendId } = req.params;
   const users = [friendId, req.user._id];
   const creator = req.user._id;
@@ -18,11 +17,10 @@ router.post('/invite/:friendId', async (req, res) => {
   const friend = new friendModel({
     users,
     creator: req.user._id,
-    status: 0
+    status: 1
   });
 
   friend.save(error => {
-    console.log('error', error)
     if (!isEmpty(error)) {
       return res.status(500).json({ success: false, data: { message: error.message } });
     }
