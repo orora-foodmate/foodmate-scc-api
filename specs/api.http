@@ -38,10 +38,13 @@ Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
 ### invite user
-
 POST {{domain}}friends/invite/{{friendId}}
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
+### reject user
+POST {{domain}}friends/reject/{{friendId}}
+Content-Type: {{jsonContentType}}
+Authorization: Bearer {{token}}
 
 ###
