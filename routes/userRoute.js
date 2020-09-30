@@ -1,8 +1,9 @@
 const express = require('express');
 const { userModel } = require('../models');
 const router = express.Router();
+const tokenVerifyMiddleware = require('../helpers/tokenVerify');
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', tokenVerifyMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
     const user = await userModel.findById(id, {password: -1, hashPassword: -1});

@@ -2,9 +2,9 @@
 
 @domain = {{DEV}}
 @jsonContentType = application/json
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjczMDM4YWEzODU4ZmIxOTUzM2YxMTMiLCJhY2NvdW50IjoiaG9yc2VraXQxOTgyQGdtYWlsLmNvbSIsImF2YXRhciI6Imh0dHA6Ly9jbGlwYXJ0LWxpYnJhcnkuY29tL2ltYWdlcy82Y3BveTc4cmkucG5nIiwibmFtZSI6InRvbWFzMSIsImlhdCI6MTYwMTM3MzEwMH0.mylhPzodeFzPT7uIp8XGNNnGMSQYurHKKl-kxT5TFVw
-@userId = 5f73037ca3858fb19533f111
-@friendId = 5f73038aa3858fb19533f113
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Zjc0MzJmZGQyMDQ4ZDEzMDE2NzdiZTMiLCJhY2NvdW50IjoiaG9yc2VraXQxOTgyQGdtYWlsLmNvbSIsImF2YXRhciI6Imh0dHA6Ly9jbGlwYXJ0LWxpYnJhcnkuY29tL2ltYWdlcy82Y3BveTc4cmkucG5nIiwibmFtZSI6InRvbWFzMSIsImlhdCI6MTYwMTQ1MDc4M30.6AbhqW2R---zXzACCAEbp0AO8lj4ZCKir4omxJ71JIY
+@userId = 5f7432fdd2048d1301677be3
+@friendId = 5f743309d2048d1301677be4
 
 ### public route
 GET {{domain}}health-check
@@ -23,12 +23,11 @@ Content-Type: {{jsonContentType}}
 ### register user
 POST {{domain}}users
 Content-Type: {{jsonContentType}}
-Authorization: Bearer {{token}}
 
 {
-  "name": "tomas1",
+  "name": "tomas2",
   "password": "a12345678",
-  "account": "horsekit1982@gmail.com"
+  "account": "thomaslin0710@gmail.com"
 }
 
 ### get user by id
@@ -42,13 +41,23 @@ Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
 ### reject user
-POST {{domain}}friends/reject/5f73071f6d23e3bb7d3cc6a5
+POST {{domain}}friends/reject/5f74333dd2048d1301677be5
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
 ### approve user
-POST {{domain}}friends/approve/5f73071f6d23e3bb7d3cc6a5
+POST {{domain}}friends/approve/5f74333dd2048d1301677be5
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
+### Create Message
+POST {{domain}}messages/5f743349d2048d1301677be6
+Content-Type: {{jsonContentType}}
+Authorization: Bearer {{token}}
+
+{
+  "content": "test content",
+  "image": "https://miro.medium.com/max/3760/1*OEnS6-DEn56szCwdOs2mrA.jpeg",
+  "attachment": "https://ia801309.us.archive.org/5/items/HandbookOfNeuralComputingApplicationsPDFStormRG/Node.js%20Design%20Patterns%20-%20Casciaro,%20Mario%20%5BPDF%5D%5BStormRG%5D.pdf"
+}
 ###
