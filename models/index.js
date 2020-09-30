@@ -8,7 +8,7 @@ const {
 } = process.env;
 
 const uri = `${MONGO_URI}:${MONGO_PORT}/${MONGO_DATABASE}?poolSize=${MONGO_POOL_SIZE}`;
-console.log("uri", uri)
+
 mongoose.connect(uri, {
   // w: "majority",
   useNewUrlParser: true,

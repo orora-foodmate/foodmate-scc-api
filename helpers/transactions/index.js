@@ -5,7 +5,6 @@ const { roomModel, friendModel } = require('../../models');
 const approveFriendTransaction = async (friendId) => {
   const session = await friendModel.startSession();
   await session.startTransaction();
-  console.log(1);
 
   try {
     const friendRecord = await friendModel.findOne({ _id: friendId }).session(session);
@@ -35,11 +34,9 @@ const approveFriendTransaction = async (friendId) => {
       friend: friendRecord,
     };
   } catch (error) {
-    console.log('approveFriendTransaction -> error', error)
     await session.abortTransaction();
     throw error;
   } finally {
-    console.log('approveFriendTransaction -> finally')
     session.endSession();
   }
 }
