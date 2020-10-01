@@ -1,6 +1,5 @@
 const { agServer } = require("./agServerCreator");
 
-console.log("tokenVerifyMiddleware -> agServer.signatureKey", agServer.signatureKey)
 const tokenVerifyMiddleware =  async (req, res, next) => {
   try {
     const authorization = req.headers.authorization;
