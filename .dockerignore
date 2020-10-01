@@ -1,4 +1,3 @@
 node_modules/
-asyngular-k8s.json
-baasil.json
-
+package-lock.json
+socketcluster-k8s.json
