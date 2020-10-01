@@ -1,0 +1,10 @@
+pipeline:
+  buld_and_deploy:
+    image: node
+    pull: true
+    commands:
+      - yarn install
+      - ./node_modules/gulp/bin/gulp.js
+    when:
+      event: [ push ]
+      status: success
