@@ -64,6 +64,8 @@
       </div>
     </div>
     <script type="text/javascript">
+    localStorage.setItem('socketcluster.authToken', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Zjc0MzJmZGQyMDQ4ZDEzMDE2NzdiZTMiLCJhY2NvdW50IjoiaG9yc2VraXQxOTgyQGdtYWlsLmNvbSIsImF2YXRhciI6Imh0dHA6Ly9jbGlwYXJ0LWxpYnJhcnkuY29tL2ltYWdlcy82Y3BveTc4cmkucG5nIiwibmFtZSI6InRvbWFzMSIsImlhdCI6MTYwMTQ4Mzc4MX0.E9LWY6rTNE4Oy_ACylwcFWr-neDro9k7wZ0ufp60LcE")
+
       // Initiate the connection to the server
       let socket = socketClusterClient.create();
 
@@ -78,6 +80,13 @@
           console.log('Socket is connected');
         }
       })();
+
+      (async () => {
+        let result = await socket.invoke('getRooms', {roomId: "5f743349d2048d1301677be6", startDateTime: "2020-09-25 12:00:00"});
+        console.log("result", result)
+        // result will be 'Success'
+      })();
+      
     </script>
   </body>
 </html>

@@ -1,4 +1,5 @@
 const express = require("express");
+const isEmpty = require("lodash/isEmpty");
 const serveStatic = require("serve-static");
 const path = require("path");
 const morgan = require("morgan");
@@ -60,8 +61,9 @@ const userRoute = require("./routes/userRoute");
 const friendRoute = require("./routes/friendRoute");
 const messageRoute = require("./routes/messageRoute");
 
-const { userModel } = require("./models");
+const { userModel, messageModel } = require("./models");
 const { saltHashPassword } = require("./helpers/utils");
+const { getMessagesLisenter } = require("./socketEvents/messagesEvents");
 
 expressApp.use("/users", userRoute);
 expressApp.use("/friends", tokenVerifyMiddleware, friendRoute);
@@ -111,7 +113,15 @@ expressApp.post("/login", async (req, res) => {
 // SocketCluster/WebSocket connection handling loop.
 (async () => {
   for await (let { socket } of agServer.listener("connection")) {
+    if(isEmpty(socket.authToken)) {
+      console.log("forawait -> isEmpty(socket.authToken)", isEmpty(socket.authToken))
+      socket.disconnect(4101, "auth fail");
+      return;
+    }
+
     // Handle socket connection.
+    getMessagesLisenter(socket);
+
   }
 })();
 

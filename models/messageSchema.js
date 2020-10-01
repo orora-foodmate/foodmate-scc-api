@@ -5,9 +5,10 @@ const messageSchema = new Schema({
   rooom: {
     type: Schema.Types.ObjectId,
     ref: 'rooms',
+    required: true,
   },
-  dateString: {
-    type: String,
+  date: {
+    type: Date,
     required: true,
   },
   createAt: {

@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const isEmpty = require("lodash/isEmpty");
-const { format } = require("date-fns");
+const { startOfDay } = require("date-fns");
 const { roomModel, messageModel } = require("../models");
 const router = express.Router();
 
@@ -16,7 +16,7 @@ router.post("/:roomId", async (req, res) => {
     }
 
     const id = mongoose.Types.ObjectId();
-    const dateString = format(Date.now(), "yyyy-mm-dd");
+    const date = startOfDay(Date.now());
     const newMessage = {
       _id: id,
       sender: user._id,
@@ -24,13 +24,13 @@ router.post("/:roomId", async (req, res) => {
     };
     const messageResult = await messageModel.findOne({
       room: roomId,
-      dateString,
+      date,
     });
 
     if (isEmpty(messageResult)) {
       const rowData = {
         room: roomId,
-        dateString,
+        date,
         messages: [newMessage],
       };
 
