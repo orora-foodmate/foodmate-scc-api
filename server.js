@@ -63,7 +63,8 @@ const messageRoute = require("./routes/messageRoute");
 
 const { userModel, messageModel } = require("./models");
 const { saltHashPassword } = require("./helpers/utils");
-const { getMessagesLisenter } = require("./socketEvents/messagesEvents");
+const { getMessagesLisenter } = require("./socketEvents/messageEvents");
+const { getRoomsLisenter } = require("./socketEvents/roomEvents");
 
 expressApp.use("/users", userRoute);
 expressApp.use("/friends", tokenVerifyMiddleware, friendRoute);
@@ -121,7 +122,7 @@ expressApp.post("/login", async (req, res) => {
 
     // Handle socket connection.
     getMessagesLisenter(socket);
-
+    getRoomsLisenter(socket);
   }
 })();
 
