@@ -4,19 +4,33 @@ const isEmpty = require('lodash/isEmpty');
 const { approveFriendTransaction } = require('../helpers/transactions');
 const router = express.Router();
 
+router.get('/', async (req, res) => {
+  const { user } = req;
+  const friends = await friendModel
+    .find({ users: {$in: [user._id]} })
+    .populate({ path: "users", select: "account name" })
+    .populate({ path: "creator", select: "account name" })
+    .exec();
+  return res.status(200).json({
+    success: true,
+    data: friends,
+  });
+});
+
 router.post('/approve/:friendId', async (req, res) => {
+  const { user } = req;
   const { friendId } = req.params;
   try {
-    const result = await approveFriendTransaction(friendId);
+    const result = await approveFriendTransaction(user._id, friendId);
 
     return res.status(200).json({
       success: true,
       data: result
     });
-  } catch(error) {
+  } catch (error) {
     return res.status(500).json({
       success: false,
-      data: { message: error.message}
+      data: { message: error.message }
     });
   }
 });
@@ -39,7 +53,7 @@ router.post('/reject/:friendId', async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      data: { message: error.message}
+      data: { message: error.message }
     });
   }
 });

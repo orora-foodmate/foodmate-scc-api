@@ -2,9 +2,9 @@
 
 @domain = {{DEV}}
 @jsonContentType = application/json
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Zjc0MzJmZGQyMDQ4ZDEzMDE2NzdiZTMiLCJhY2NvdW50IjoiaG9yc2VraXQxOTgyQGdtYWlsLmNvbSIsImF2YXRhciI6Imh0dHA6Ly9jbGlwYXJ0LWxpYnJhcnkuY29tL2ltYWdlcy82Y3BveTc4cmkucG5nIiwibmFtZSI6InRvbWFzMSIsImlhdCI6MTYwMTQ1MDc4M30.6AbhqW2R---zXzACCAEbp0AO8lj4ZCKir4omxJ71JIY
-@userId = 5f7432fdd2048d1301677be3
-@friendId = 5f743309d2048d1301677be4
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjczMDM4YWEzODU4ZmIxOTUzM2YxMTMiLCJhY2NvdW50IjoiaG9yc2VraXQxOTgyQGdtYWlsLmNvbSIsImF2YXRhciI6Imh0dHA6Ly9jbGlwYXJ0LWxpYnJhcnkuY29tL2ltYWdlcy82Y3BveTc4cmkucG5nIiwibmFtZSI6InRvbWFzMSIsImlhdCI6MTYwMjAzOTk3MX0.MNLVZQqGZ0A87BmDFO4xkR5J_wGpdpRsx6TqjTrnCNg
+@userId = 5f73038aa3858fb19533f113
+@friendId = 5f73037ca3858fb19533f111
 
 ### public route
 GET {{domain}}health-check
@@ -35,18 +35,24 @@ GET {{domain}}users/{{userId}}
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
+### get friends
+GET {{domain}}friends
+Content-Type: {{jsonContentType}}
+Authorization: Bearer {{token}}
+
+
 ### invite user
 POST {{domain}}friends/invite/{{friendId}}
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
 ### reject user
-POST {{domain}}friends/reject/5f74333dd2048d1301677be5
+POST {{domain}}friends/reject/5f7d3120353a70b5f040651f
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
 ### approve user
-POST {{domain}}friends/approve/5f74333dd2048d1301677be5
+POST {{domain}}friends/approve/5f7d3120353a70b5f040651f
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
