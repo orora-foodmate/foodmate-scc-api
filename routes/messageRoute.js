@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const isEmpty = require("lodash/isEmpty");
+const pick = require("lodash/pick");
 const { startOfDay } = require("date-fns");
 const { roomModel, messageModel } = require("../models");
 const router = express.Router();
@@ -43,7 +44,7 @@ router.post("/:roomId", async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      data: newMessage,
+      data: {...newMessage, user: pick(user, ['_id', 'name', 'avatar'])},
     });
   } catch (error) {
     res.status(500).json({
