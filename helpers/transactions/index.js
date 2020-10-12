@@ -1,5 +1,4 @@
 const isEmpty = require('lodash/isEmpty');
-const mongoose = require('mongoose');
 const { roomModel, friendModel } = require('../../models');
 
 const approveFriendTransaction = async (userId, friendId) => {

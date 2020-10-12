@@ -1,20 +1,54 @@
 const express = require('express');
 const { friendModel } = require('../models');
 const isEmpty = require('lodash/isEmpty');
+const isNull = require('lodash/isNull');
 const { approveFriendTransaction } = require('../helpers/transactions');
 const router = express.Router();
 
+const getConditionByQuery = (query) => {
+  let createAtConn = {};
+  let updateAtConn = {};
+  const { createAt = null, updateAt = null, or = null } = query;
+  const hasOR = Boolean(or) && !isNull(createAt) && !isNull(updateAt);
+
+  if (isNull(createAt) && isNull(updateAt)) {
+    return {}
+  }
+
+  if (!isNull(createAt)) {
+    createAtConn = { createAt: { $gte: createAt } };
+  }
+  if (!isNull(updateAt)) {
+    createAtConn = { updateAt: { $gte: updateAt } };
+  }
+  return hasOR
+    ? { $or: [createAtConn, updateAtConn] }
+    : { ...createAtConn, ...updateAtConn };
+}
+
 router.get('/', async (req, res) => {
-  const { user } = req;
-  const friends = await friendModel
-    .find({ users: { $in: [user._id] } })
-    .populate({ path: "users", select: "account name" })
-    .populate({ path: "creator", select: "account name" })
-    .exec();
+  try {
+    const condition = getConditionByQuery(req.query);
+    const { user } = req;
+    const friends = await friendModel
+      .find({ users: { $in: [user._id] }, ...condition })
+      .populate({ path: "users", select: "account name" })
+      .populate({ path: "creator", select: "account name" })
+      .exec();
+
   return res.status(200).json({
     success: true,
     data: { friends },
   });
+  } catch (error) {
+
+    return res.status(200).json({
+      success: true,
+      data: { message: error.message },
+    });
+  }
+
+
 });
 
 router.post('/approve/:friendId', async (req, res) => {

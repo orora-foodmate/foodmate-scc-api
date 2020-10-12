@@ -36,7 +36,7 @@ Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
 ### get friends
-GET {{domain}}friends
+GET {{domain}}friends?createAt=2020-10-06&updateAt=2020-10-11
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
