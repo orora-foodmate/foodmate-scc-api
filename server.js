@@ -76,42 +76,47 @@ expressApp.get("/health-check", tokenVerifyMiddleware, (req, res) => {
 });
 
 expressApp.post("/login", async (req, res) => {
-  const { account, password } = req.body;
+  try {
+    const { account, password } = req.body;
+    const user = await userModel.findOne({ account });
+    
+    if(isEmpty(user)) {
+      return res.status(400).json({
+        success: false,
+        data: {
+          message: '使用者不存在'
+        }
+      })
+    }
 
-  const user = await userModel.findOne({ account });
-  if(isEmpty(user)) {
-    return res.status(400).json({
-      success: false,
+    const hashPassword = saltHashPassword(password, process.env.SALT_SECRET);
+  
+    if (user.hashPassword !== hashPassword) {
+      return res.status(401).json({
+        success: false,
+        data: {
+          message: "authorization fail",
+        },
+      });
+    }
+  
+    const myTokenData = pick(user, ["_id", "account", "avatar", "name"]);
+    const signedTokenString = await agServer.auth.signToken(
+      myTokenData,
+      agServer.signatureKey
+    );
+  
+    res.status(200).json({
+      success: true,
       data: {
-        message: '使用者不存在'
-      }
-    })
-  }
-
-  const hashPassword = saltHashPassword(password, process.env.SALT_SECRET);
-
-  if (user.hashPassword !== hashPassword) {
-    return res.status(401).json({
-      success: false,
-      data: {
-        message: "authorization fail",
+        ...myTokenData,
+        token: signedTokenString,
       },
     });
+  }catch(error) {
+    res.status(500).json({success: false, data: {message: error.message}})
   }
-
-  const myTokenData = pick(user, ["_id", "account", "avatar", "name"]);
-  const signedTokenString = await agServer.auth.signToken(
-    myTokenData,
-    agServer.signatureKey
-  );
-
-  res.status(200).json({
-    success: true,
-    data: {
-      ...myTokenData,
-      token: signedTokenString,
-    },
-  });
+  
 });
 
 // HTTP request handling loop.
