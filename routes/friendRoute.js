@@ -16,10 +16,10 @@ const getConditionByQuery = (query) => {
   }
 
   if (!isNull(createAt)) {
-    createAtConn = { createAt: { $gte: createAt } };
+    createAtConn = { createAt: { $gte: decodeURI(createAt) } };
   }
   if (!isNull(updateAt)) {
-    createAtConn = { updateAt: { $gte: updateAt } };
+    createAtConn = { updateAt: { $gte: decodeURI(updateAt) } };
   }
   return hasOR
     ? { $or: [createAtConn, updateAtConn] }
