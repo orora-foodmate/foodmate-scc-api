@@ -1,7 +1,30 @@
 const crypto = require('crypto');
+const isNull = require('lodash/isNull');
 
 const {SALT_SECRET} = process.env;
 
+const getConditionByQuery = (query) => {
+  let createAtConn = {};
+  let updateAtConn = {};
+  const { createAt = null, updateAt = null, or = null } = query;
+  const hasOR = Boolean(or) && !isNull(createAt) && !isNull(updateAt);
+
+  if (isNull(createAt) && isNull(updateAt)) {
+    return {}
+  }
+
+  if (!isNull(createAt)) {
+    createAtConn = { createAt: { $gt: decodeURI(createAt) } };
+  }
+  if (!isNull(updateAt)) {
+    updateAtConn = { updateAt: { $gt: decodeURI(updateAt) } };
+  }
+  return hasOR
+    ? { $or: [createAtConn, updateAtConn] }
+    : { ...createAtConn, ...updateAtConn };
+}
+
+module.exports.getConditionByQuery = getConditionByQuery;
 module.exports.debugLog = msg => console.log(`[debug] ${msg}`);
 
 const sha512 = function(password, salt){
@@ -18,3 +41,4 @@ module.exports.saltHashPassword = (userpassword) => {
   const  passwordData = sha512(userpassword, SALT_SECRET);
   return passwordData.passwordHash;
 }
+

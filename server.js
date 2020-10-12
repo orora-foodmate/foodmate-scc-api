@@ -58,6 +58,7 @@ expressApp.use(cookieParser());
 
 const tokenVerifyMiddleware = require('./helpers/tokenVerify');
 const userRoute = require("./routes/userRoute");
+const roomRoute = require('./routes/roomRoute');
 const friendRoute = require("./routes/friendRoute");
 const messageRoute = require("./routes/messageRoute");
 
@@ -69,6 +70,7 @@ const { getRoomsLisenter } = require("./socketEvents/roomEvents");
 expressApp.use("/users", userRoute);
 expressApp.use("/friends", tokenVerifyMiddleware, friendRoute);
 expressApp.use("/messages", tokenVerifyMiddleware, messageRoute);
+expressApp.use("/rooms", tokenVerifyMiddleware, roomRoute);
 
 // Add GET /health-check express route
 expressApp.get("/health-check", tokenVerifyMiddleware, (req, res) => {

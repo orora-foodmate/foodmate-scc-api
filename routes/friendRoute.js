@@ -1,30 +1,9 @@
 const express = require('express');
 const { friendModel } = require('../models');
 const isEmpty = require('lodash/isEmpty');
-const isNull = require('lodash/isNull');
 const { approveFriendTransaction } = require('../helpers/transactions');
+const { getConditionByQuery } = require('../helpers/utils');
 const router = express.Router();
-
-const getConditionByQuery = (query) => {
-  let createAtConn = {};
-  let updateAtConn = {};
-  const { createAt = null, updateAt = null, or = null } = query;
-  const hasOR = Boolean(or) && !isNull(createAt) && !isNull(updateAt);
-
-  if (isNull(createAt) && isNull(updateAt)) {
-    return {}
-  }
-
-  if (!isNull(createAt)) {
-    createAtConn = { createAt: { $gte: decodeURI(createAt) } };
-  }
-  if (!isNull(updateAt)) {
-    createAtConn = { updateAt: { $gte: decodeURI(updateAt) } };
-  }
-  return hasOR
-    ? { $or: [createAtConn, updateAtConn] }
-    : { ...createAtConn, ...updateAtConn };
-}
 
 router.get('/', async (req, res) => {
   try {
@@ -95,6 +74,14 @@ router.post('/reject/:friendId', async (req, res) => {
 router.post('/invite/:userId', async (req, res) => {
   const { userId } = req.params;
   const creator = req.user._id;
+
+  if(creator.toString() === userId) {
+    return res.status(500).json({
+      success: false,
+      data: { message: '邀請者與被邀請者不可相同' }
+    });
+  }
+
   const users = [userId, creator];
 
   const oldRecord = await friendModel.findOne({ users });
