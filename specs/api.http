@@ -2,7 +2,7 @@
 
 @domain = {{DEV}}
 @jsonContentType = application/json
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Zjc0MzJmZGQyMDQ4ZDEzMDE2NzdiZTMiLCJhY2NvdW50IjoiaG9yc2VraXQxOTgyQGdtYWlsLmNvbSIsImF2YXRhciI6Imh0dHA6Ly9jbGlwYXJ0LWxpYnJhcnkuY29tL2ltYWdlcy82Y3BveTc4cmkucG5nIiwibmFtZSI6InRvbWFzMSIsImlhdCI6MTYwMTQ1MDc4M30.6AbhqW2R---zXzACCAEbp0AO8lj4ZCKir4omxJ71JIY
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Zjc0MzJmZGQyMDQ4ZDEzMDE2NzdiZTMiLCJhY2NvdW50IjoiaG9yc2VraXQxOTgyQGdtYWlsLmNvbSIsImF2YXRhciI6Imh0dHA6Ly9jbGlwYXJ0LWxpYnJhcnkuY29tL2ltYWdlcy82Y3BveTc4cmkucG5nIiwibmFtZSI6InRvbWFzMSIsImlhdCI6MTYwMjE0MDE0MX0.rlAYe0KmDdG8rWdnKsqi-n6_kfiNm_ai-8bn9f7tebk
 @userId = 5f7432fdd2048d1301677be3
 @friendId = 5f743309d2048d1301677be4
 
@@ -32,6 +32,11 @@ Content-Type: {{jsonContentType}}
 
 ### get user by id
 GET {{domain}}users/{{userId}}
+Content-Type: {{jsonContentType}}
+Authorization: Bearer {{token}}
+
+### get friends
+GET {{domain}}friends
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 

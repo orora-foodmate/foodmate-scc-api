@@ -1,8 +1,24 @@
 const express = require('express');
 const { friendModel } = require('../models');
-const isEmpty = require('lodash/isEmpty');
+const isEmpty = require('lodash/isEmpty');  
 const { approveFriendTransaction } = require('../helpers/transactions');
 const router = express.Router();
+
+router.get("/", async (req, res) => {
+  const userId = req.user._id;
+  const friends = await friendModel
+    .find({users: {$in: [userId]}})
+    .populate({path: "users", select: "account name avatar"})
+    .populate({path: "creator", select: "account name avatar"});
+  console.log("friends", friends)
+  
+  res.status(200).json({
+    success: true,
+    data: {
+      friends
+    }
+  })
+});
 
 router.post('/approve/:friendId', async (req, res) => {
   const { friendId } = req.params;
