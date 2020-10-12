@@ -77,7 +77,17 @@ expressApp.get("/health-check", tokenVerifyMiddleware, (req, res) => {
 
 expressApp.post("/login", async (req, res) => {
   const { account, password } = req.body;
+
   const user = await userModel.findOne({ account });
+  if(isEmpty(user)) {
+    return res.status(400).json({
+      success: false,
+      data: {
+        message: '使用者不存在'
+      }
+    })
+  }
+
   const hashPassword = saltHashPassword(password, process.env.SALT_SECRET);
 
   if (user.hashPassword !== hashPassword) {

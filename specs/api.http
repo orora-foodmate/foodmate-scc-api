@@ -2,7 +2,7 @@
 
 @domain = {{DEV}}
 @jsonContentType = application/json
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjczMDM4YWEzODU4ZmIxOTUzM2YxMTMiLCJhY2NvdW50IjoiaG9yc2VraXQxOTgyQGdtYWlsLmNvbSIsImF2YXRhciI6Imh0dHA6Ly9jbGlwYXJ0LWxpYnJhcnkuY29tL2ltYWdlcy82Y3BveTc4cmkucG5nIiwibmFtZSI6InRvbWFzMSIsImlhdCI6MTYwMjAzOTk3MX0.MNLVZQqGZ0A87BmDFO4xkR5J_wGpdpRsx6TqjTrnCNg
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjczMDM3Y2EzODU4ZmIxOTUzM2YxMTEiLCJhY2NvdW50IjoidGhvbWFzbGluMDcxMEBnbWFpbC5jb20iLCJhdmF0YXIiOiJodHRwOi8vY2xpcGFydC1saWJyYXJ5LmNvbS9pbWFnZXMvNmNwb3k3OHJpLnBuZyIsIm5hbWUiOiJ0b21hczIiLCJpYXQiOjE2MDIwNDIwNjF9.XfrFX2BJmHkkBsaxcmKzZSHAgLFcNwaXc6rg0o1w7P4
 @userId = 5f73038aa3858fb19533f113
 @friendId = 5f73037ca3858fb19533f111
 
@@ -16,7 +16,7 @@ POST {{domain}}login
 Content-Type: {{jsonContentType}}
 
 {
-  "account": "horsekit1982@gmail.com",
+  "account": "thomaslin0710@gmail.com",
   "password": "a12345678"
 }
 

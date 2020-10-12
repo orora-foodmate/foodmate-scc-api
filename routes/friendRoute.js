@@ -7,13 +7,13 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   const { user } = req;
   const friends = await friendModel
-    .find({ users: {$in: [user._id]} })
+    .find({ users: { $in: [user._id] } })
     .populate({ path: "users", select: "account name" })
     .populate({ path: "creator", select: "account name" })
     .exec();
   return res.status(200).json({
     success: true,
-    data: friends,
+    data: { friends },
   });
 });
 
