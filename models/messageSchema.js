@@ -21,12 +21,12 @@ const messageSchema = new Schema({
   },
   messages: [
     {
-      sender: {
+      user: {
         type: Schema.Types.ObjectId,
         ref: 'users',
         required: true,
       },
-      content: {
+      text: {
         type: String,
         default: null
       },

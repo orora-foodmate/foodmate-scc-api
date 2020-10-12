@@ -63,7 +63,7 @@ Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
 {
-  "content": "test content",
+  "text": "test content",
   "image": "https://miro.medium.com/max/3760/1*OEnS6-DEn56szCwdOs2mrA.jpeg",
   "attachment": "https://ia801309.us.archive.org/5/items/HandbookOfNeuralComputingApplicationsPDFStormRG/Node.js%20Design%20Patterns%20-%20Casciaro,%20Mario%20%5BPDF%5D%5BStormRG%5D.pdf"
 }

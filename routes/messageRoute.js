@@ -19,9 +19,10 @@ router.post("/:roomId", async (req, res) => {
     const date = startOfDay(Date.now());
     const newMessage = {
       _id: id,
-      sender: user._id,
+      user: user._id,
       ...body,
     };
+
     const messageResult = await messageModel.findOne({
       room: roomId,
       date,
@@ -33,9 +34,9 @@ router.post("/:roomId", async (req, res) => {
         date,
         messages: [newMessage],
       };
-
       await messageModel.create(rowData);
     } else {
+
       messageResult.messages.push(newMessage);
       await messageResult.save();
     }
