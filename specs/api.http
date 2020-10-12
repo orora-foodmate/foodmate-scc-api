@@ -5,6 +5,7 @@
 @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjczMDM4YWEzODU4ZmIxOTUzM2YxMTMiLCJhY2NvdW50IjoiaG9yc2VraXQxOTgyQGdtYWlsLmNvbSIsImF2YXRhciI6Imh0dHA6Ly9jbGlwYXJ0LWxpYnJhcnkuY29tL2ltYWdlcy82Y3BveTc4cmkucG5nIiwibmFtZSI6InRvbWFzMSIsImlhdCI6MTYwMjQ5NDY1NX0.MsfJJRgePNvJ0bv0g_aJ_AdRQ2U1FyIjPTvCOBHQpHk
 @userId = 5f73037ca3858fb19533f111
 @friendId = 5f73038aa3858fb19533f113
+@roomId = 5f743349d2048d1301677be6
 
 ### public route
 GET {{domain}}health-check
@@ -57,7 +58,7 @@ Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
 ### Create Message
-POST {{domain}}messages/5f743349d2048d1301677be6
+POST {{domain}}messages/{{roomId}}
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
