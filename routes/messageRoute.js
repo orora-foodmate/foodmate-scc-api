@@ -52,7 +52,7 @@ router.get("/:roomId", async (req, res) => {
 router.post("/:roomId", async (req, res) => {
   try {
     const { roomId } = req.params;
-    const { user, body } = req;11
+    const { user, body } = req;
 
     const room = await roomModel.findById(roomId);
     if (isEmpty(room)) {
