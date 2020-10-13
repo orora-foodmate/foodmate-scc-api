@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const { schemaOptions } = require('../constants/mongooseOptions');
+const { now, formatDateTime } = require('../helpers/dateHelper');
 const { Schema } = mongoose;
 
 const roomSchema = new Schema({
@@ -19,11 +21,13 @@ const roomSchema = new Schema({
   ],
   createAt: {
     type: Date,
-    default: Date.now,
+    default: now,
+    get: formatDateTime,
   },
   updateAt: {
     type: Date,
-    default: Date.now,
+    default: now,
+    get: formatDateTime,
   },
   status: {
     type: Number,
@@ -35,11 +39,11 @@ const roomSchema = new Schema({
     enum: [0, 1],
     default: 0
   },
-});
+}, schemaOptions);
 
 roomSchema.pre('save',  function(next) {
   let user = this;
-  user.updateAt = Date.now();
+  user.updateAt = now();
   next();
 });
 

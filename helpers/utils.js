@@ -1,7 +1,8 @@
 const crypto = require('crypto');
 const isNull = require('lodash/isNull');
+const { zonedTimeToUtc } = require('./dateHelper');
 
-const {SALT_SECRET} = process.env;
+const { SALT_SECRET } = process.env;
 
 const getConditionByQuery = (query) => {
   let createAtConn = {};
@@ -14,10 +15,14 @@ const getConditionByQuery = (query) => {
   }
 
   if (!isNull(createAt)) {
-    createAtConn = { createAt: { $gt: decodeURI(createAt) } };
+    const createAtStr = decodeURI(createAt);
+    const createAtUTC = zonedTimeToUtc(createAtStr);
+    createAtConn = { createAt: { $gt: createAtUTC } };
   }
   if (!isNull(updateAt)) {
-    updateAtConn = { updateAt: { $gt: decodeURI(updateAt) } };
+    const updateAtStr = decodeURI(updateAt);
+    const updateAtUTC = zonedTimeToUtc(updateAtStr);
+    updateAtConn = { updateAt: { $gt: updateAtUTC } };
   }
   return hasOR
     ? { $or: [createAtConn, updateAtConn] }
@@ -27,18 +32,18 @@ const getConditionByQuery = (query) => {
 module.exports.getConditionByQuery = getConditionByQuery;
 module.exports.debugLog = msg => console.log(`[debug] ${msg}`);
 
-const sha512 = function(password, salt){
+const sha512 = function (password, salt) {
   const hash = crypto.createHmac('sha512', salt); /** Hashing algorithm sha512 */
   hash.update(password);
   const value = hash.digest('hex');
   return {
-      salt:salt,
-      passwordHash:value.toString()
+    salt: salt,
+    passwordHash: value.toString()
   };
 };
 
 module.exports.saltHashPassword = (userpassword) => {
-  const  passwordData = sha512(userpassword, SALT_SECRET);
+  const passwordData = sha512(userpassword, SALT_SECRET);
   return passwordData.passwordHash;
 }
 

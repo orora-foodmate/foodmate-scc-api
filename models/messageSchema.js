@@ -1,7 +1,34 @@
 const mongoose = require('mongoose');
+const { schemaOptions } = require('../constants/mongooseOptions');
+const { now, formatDateTime } = require('../helpers/dateHelper');
 const { Schema } = mongoose;
 
 const messageSchema = new Schema({
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'users',
+    required: true,
+  },
+  text: {
+    type: String,
+    default: null
+  },
+  image: {
+    type: String,
+    default: null
+  },
+  attachment: {
+    type: String,
+    default: null
+  },
+  createAt: {
+    type: Date,
+    default: now,
+    get: formatDateTime,
+  },
+}, schemaOptions);
+
+const messagesByRoomSchema = new Schema({
   room: {
     type: Schema.Types.ObjectId,
     ref: 'rooms',
@@ -10,46 +37,25 @@ const messageSchema = new Schema({
   date: {
     type: Date,
     required: true,
+    get: formatDateTime,
   },
   createAt: {
     type: Date,
-    default: Date.now,
+    default: now,
+    get: formatDateTime,
   },
   updateAt: {
     type: Date,
-    default: Date.now,
+    default: now,
+    get: formatDateTime,
   },
-  messages: [
-    {
-      user: {
-        type: Schema.Types.ObjectId,
-        ref: 'users',
-        required: true,
-      },
-      text: {
-        type: String,
-        default: null
-      },
-      image: {
-        type: String,
-        default: null
-      },
-      attachment: {
-        type: String,
-        default: null
-      },
-      createAt: {
-        type: Date,
-        default: Date.now,
-      },
-    }
-  ]
-});
+  messages: [messageSchema]
+}, schemaOptions);
 
-messageSchema.pre('save',  function(next) {
+messagesByRoomSchema.pre('save', function (next) {
   let messages = this;
-  messages.updateAt = Date.now();
+  messages.updateAt = now();
   next();
 });
 
-module.exports = messageSchema;
+module.exports = messagesByRoomSchema;

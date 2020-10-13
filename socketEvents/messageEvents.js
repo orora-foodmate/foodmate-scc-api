@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { messageModel } = require("../models");
-const { startOfDay } = require("date-fns");
+const { startOfDay } = require("../helpers/dateHelper");
 
 const getMessagesLisenter = async (socket) => {
   // Set up a loop to handle and respond to RPCs.
