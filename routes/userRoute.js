@@ -6,7 +6,7 @@ const tokenVerifyMiddleware = require('../helpers/tokenVerify');
 router.get('/:id', tokenVerifyMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await userModel.findById(id, {password: -1, hashPassword: -1});
+    const user = await userModel.findById(id, {password: false, hashPassword: false});
     return res.status(200).json({
       success: true,
       data: user

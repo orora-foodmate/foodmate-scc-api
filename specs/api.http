@@ -2,10 +2,10 @@
 
 @domain = {{DEV}}
 @jsonContentType = application/json
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Zjc0MzJmZGQyMDQ4ZDEzMDE2NzdiZTMiLCJhY2NvdW50IjoiaG9yc2VraXQxOTgyQGdtYWlsLmNvbSIsImF2YXRhciI6Imh0dHA6Ly9jbGlwYXJ0LWxpYnJhcnkuY29tL2ltYWdlcy82Y3BveTc4cmkucG5nIiwibmFtZSI6InRvbWFzMSIsImlhdCI6MTYwMjUyMzg2OX0.ZYdUBR2pAQ1Qgy39dgGCzvNnXYL37urPnZR8EcWn2Lg
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjczMDM4YWEzODU4ZmIxOTUzM2YxMTMiLCJhY2NvdW50IjoiaG9yc2VraXQxOTgyQGdtYWlsLmNvbSIsImF2YXRhciI6Imh0dHA6Ly9jbGlwYXJ0LWxpYnJhcnkuY29tL2ltYWdlcy82Y3BveTc4cmkucG5nIiwibmFtZSI6InRvbWFzMSIsImlhdCI6MTYwMjU2OTk2Mn0.yaXCznR_48MLpEYVtAxlsgPanZWRJ-7hmvICoPtBTdM
 @userId = 5f73037ca3858fb19533f111
 @friendId = 5f73038aa3858fb19533f113
-@roomId = 5f743349d2048d1301677be6
+@roomId = 5f8420cccd899f2a59f24fe6
 
 ### public route
 GET {{domain}}health-check
@@ -54,6 +54,11 @@ Authorization: Bearer {{token}}
 
 ### approve user
 POST {{domain}}friends/approve/5f841ff158bacd2877847e70
+Content-Type: {{jsonContentType}}
+Authorization: Bearer {{token}}
+
+### Get Messages
+GET {{domain}}messages/{{roomId}}
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 

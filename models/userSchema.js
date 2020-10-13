@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const isEmpty = require('lodash/isEmpty');
+const { schemaOptions } = require('../constants/mongooseOptions');
 const { now, formatDateTime } = require('../helpers/dateHelper');
 const { saltHashPassword } = require('../helpers/utils');
 
@@ -41,7 +42,7 @@ const userSchema = new Schema({
     default: now,
     get: formatDateTime,
   },
-}, { toObject: { getters: true, virtuals: true, versionKey: false }, toJSON: { getters: true}, runSettersOnQuery: true});
+}, schemaOptions);
 
 userSchema.pre('save',  function(next) {
   let user = this;
