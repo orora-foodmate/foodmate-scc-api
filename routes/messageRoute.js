@@ -12,6 +12,9 @@ router.post("/:roomId", async (req, res) => {
     const { user, body } = req;
 
     const room = await roomModel.findById(roomId);
+    if (isEmpty(room)) {
+      throw new Error("房間不存在")
+    }
     if (!room.users.includes(user._id)) {
       throw new Error("只有房間成員才能發送訊息");
     }
@@ -44,7 +47,7 @@ router.post("/:roomId", async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      data: {...newMessage, user: pick(user, ['_id', 'name', 'avatar'])},
+      data: { ...newMessage, user: pick(user, ['_id', 'name', 'avatar']) },
     });
   } catch (error) {
     res.status(500).json({
