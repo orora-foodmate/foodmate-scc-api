@@ -39,7 +39,6 @@ router.get("/:roomId", async (req, res) => {
       }
     })
   } catch(error) {
-    console.log('error', error)
     res.status(500).json({
       success: false,
       data: {
@@ -69,7 +68,6 @@ router.post("/:roomId", async (req, res) => {
       user: user._id,
       ...body,
     };
-    console.log('newMessage', newMessage)
 
     const messageResult = await messageModel.findOne({
       room: roomId,

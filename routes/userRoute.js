@@ -1,7 +1,9 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const { userModel } = require('../models');
 const router = express.Router();
 const tokenVerifyMiddleware = require('../helpers/tokenVerify');
+const { createNewUserStatus } = require('../onLineState/app');
 
 router.get('/:id', tokenVerifyMiddleware, async (req, res) => {
   try {
@@ -23,27 +25,28 @@ router.get('/:id', tokenVerifyMiddleware, async (req, res) => {
 router.post('/', async (req, res, next) => {
   try {
     const { name, password, account } = req.body;
+    const id = mongoose.Types.ObjectId();
     const user = new userModel({
+      _id: id,
       name,
       password,
       account
     });
-    user.save((error) => {
-      if (error) {
-        return res.status(500).json({ success: false, data: { message: error.message } });
-      }
+    await user.save();
+    createNewUserStatus(id);
+    // 之後要拆出 micro service 控制 online status 時使用
+    // await req.exchange.invokePublish('createNewUserStatus', { userId: id });
 
-      return res.status(200).json({
-        success: true,
-        data: {
-          _id: user._id,
-          name: user.name,
-          account: user.account
-        }
-      });
-    })
+    return res.status(200).json({
+      success: true,
+      data: {
+        id,
+        name: user.name,
+        account: user.account
+      }
+    });
   } catch (error) {
-    next(error);
+    return res.status(500).json({ success: false, data: { message: error.message } });
   }
 });
 

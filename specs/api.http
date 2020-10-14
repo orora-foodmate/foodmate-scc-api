@@ -26,9 +26,9 @@ POST {{domain}}users
 Content-Type: {{jsonContentType}}
 
 {
-  "name": "tomas2",
+  "name": "tomas11",
   "password": "a12345678",
-  "account": "thomaslin0710@gmail.com"
+  "account": "thomaslin0719@gmail.com"
 }
 
 ### get user by id

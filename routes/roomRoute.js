@@ -6,7 +6,6 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const condition = getConditionByQuery(req.query);
-    console.log('condition', condition)
     const { user } = req;
     const rooms = await roomModel
       .find({ users: { $in: [user._id] }, ...condition })

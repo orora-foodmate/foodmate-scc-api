@@ -9,6 +9,7 @@
     }
   ],
   "dependencies": {
+    "caminte": "^0.4.1",
     "connect": "^3.6.6",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
@@ -22,6 +23,7 @@
     "mongoose": "^5.10.7",
     "morgan": "^1.7.0",
     "nodemon": "^1.18.9",
+    "redis": "^3.0.2",
     "sc-errors": "^2.0.1",
     "scc-broker-client": "^8.0.0",
     "serve-static": "^1.13.2",

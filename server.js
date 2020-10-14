@@ -56,21 +56,28 @@ expressApp.use(express.json());
 expressApp.use(express.urlencoded({ extended: false }));
 expressApp.use(cookieParser());
 
+expressApp.use((req, _, next) => {
+  req.exchange = agServer.exchange;
+  next();
+});
+
 const tokenVerifyMiddleware = require('./helpers/tokenVerify');
 const userRoute = require("./routes/userRoute");
 const roomRoute = require('./routes/roomRoute');
 const friendRoute = require("./routes/friendRoute");
 const messageRoute = require("./routes/messageRoute");
 
-const { userModel, messageModel } = require("./models");
+const { userModel } = require("./models");
 const { saltHashPassword } = require("./helpers/utils");
-const { getMessagesLisenter } = require("./socketEvents/messageEvents");
-const { getRoomsLisenter } = require("./socketEvents/roomEvents");
+const { getMessagesListener } = require("./socketEvents/messageEvents");
+const { getRoomsListener } = require("./socketEvents/roomEvents");
+const { createNewUserListener } = require('./onLineState/app');
 
 expressApp.use("/users", userRoute);
 expressApp.use("/friends", tokenVerifyMiddleware, friendRoute);
 expressApp.use("/messages", tokenVerifyMiddleware, messageRoute);
 expressApp.use("/rooms", tokenVerifyMiddleware, roomRoute);
+
 
 // Add GET /health-check express route
 expressApp.get("/health-check", tokenVerifyMiddleware, (req, res) => {
@@ -132,14 +139,16 @@ expressApp.post("/login", async (req, res) => {
 (async () => {
   for await (let { socket } of agServer.listener("connection")) {
     if(isEmpty(socket.authToken)) {
-      console.log("forawait -> isEmpty(socket.authToken)", isEmpty(socket.authToken))
       socket.disconnect(4101, "auth fail");
       return;
     }
 
     // Handle socket connection.
-    getMessagesLisenter(socket);
-    getRoomsLisenter(socket);
+    getMessagesListener(socket);
+    getRoomsListener(socket);
+
+    // Handle User Status
+    createNewUserListener(socket);
   }
 })();
 
