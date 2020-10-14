@@ -1,15 +1,16 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const isEmpty = require("lodash/isEmpty");
-const isNull = require("lodash/isNull");
 const pick = require("lodash/pick");
-const { startOfDay, zonedTimeToUtc } = require("../helpers/dateHelper");
+const {getConditionByQuery} = require('../helpers/utils');
+const { startOfDay, now, formatDateTime } = require("../helpers/dateHelper");
 const { roomModel, messageModel } = require("../models");
 const router = express.Router();
 
 const getDateTimeRange = (query) => {
 
 }
+
 router.get("/:roomId", async (req, res) => {
   try {
     const { roomId } = req.params;
@@ -23,15 +24,16 @@ router.get("/:roomId", async (req, res) => {
       throw new Error("只有房間成員才能查詢訊息");
     }
 
-    const messages = await messageModel.findOne({
+    const condition = getConditionByQuery(req.query);
+    const messages = await messageModel.find({
       messages: {
         $elemMatch: {
-          createAt: {
-            $gt: zonedTimeToUtc(new Date('2020-10-12 00:00:00'))
-          }
+          ...condition
         }
       }
-    }).exec();
+    })
+    .populate({ path: "messages.user", select: "account name" })
+    .exec();
     res.status(200).json({
       success: true,
       data: {
@@ -63,9 +65,11 @@ router.post("/:roomId", async (req, res) => {
 
     const id = mongoose.Types.ObjectId();
     const date = startOfDay();
+    const createAt = now();
     const newMessage = {
       _id: id,
       user: user._id,
+      createAt,
       ...body,
     };
 
@@ -89,7 +93,17 @@ router.post("/:roomId", async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      data: { ...newMessage, user: pick(user, ['_id', 'name', 'avatar']) },
+      data: {
+        ...newMessage,
+        _id: undefined,
+        id: newMessage._id,
+        createAt: formatDateTime(createAt),
+        user: {
+          id: user._id,
+          name: user.name,
+          avatar: user.avatar,
+        },
+      },
     });
   } catch (error) {
     res.status(500).json({
