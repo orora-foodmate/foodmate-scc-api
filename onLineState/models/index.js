@@ -5,7 +5,7 @@ const redisSchema = new Schema('redis', { port: 6379 });
 
 const User = redisSchema.define('users', {
   id: {type: redisSchema.String, unique: true, index: true, require: true },
-  socketId: {type: redisSchema.String, index: true, default: null },
+  socketId: {type: redisSchema.String, index: true, default: '' },
   createAt: { type: redisSchema.Date, default: now},
   updateAt: { type: redisSchema.Date, default: now},
   active: { type: redisSchema.Boolean, default: false },

@@ -71,7 +71,7 @@ const { userModel } = require("./models");
 const { saltHashPassword } = require("./helpers/utils");
 const { getMessagesListener } = require("./socketEvents/messageEvents");
 const { getRoomsListener } = require("./socketEvents/roomEvents");
-const { createNewUserListener } = require('./onLineState/app');
+const { activeUserStatus, unActiveUserStatus } = require('./onLineState/app');
 
 expressApp.use("/users", userRoute);
 expressApp.use("/friends", tokenVerifyMiddleware, friendRoute);
@@ -88,8 +88,8 @@ expressApp.post("/login", async (req, res) => {
   try {
     const { account, password } = req.body;
     const user = await userModel.findOne({ account });
-    
-    if(isEmpty(user)) {
+
+    if (isEmpty(user)) {
       return res.status(400).json({
         success: false,
         data: {
@@ -99,7 +99,7 @@ expressApp.post("/login", async (req, res) => {
     }
 
     const hashPassword = saltHashPassword(password, process.env.SALT_SECRET);
-  
+
     if (user.hashPassword !== hashPassword) {
       return res.status(401).json({
         success: false,
@@ -108,13 +108,13 @@ expressApp.post("/login", async (req, res) => {
         },
       });
     }
-  
+
     const myTokenData = pick(user, ["_id", "account", "avatar", "name"]);
     const signedTokenString = await agServer.auth.signToken(
       myTokenData,
       agServer.signatureKey
     );
-  
+
     res.status(200).json({
       success: true,
       data: {
@@ -122,10 +122,10 @@ expressApp.post("/login", async (req, res) => {
         token: signedTokenString,
       },
     });
-  }catch(error) {
-    res.status(500).json({success: false, data: {message: error.message}})
+  } catch (error) {
+    res.status(500).json({ success: false, data: { message: error.message } })
   }
-  
+
 });
 
 // HTTP request handling loop.
@@ -138,19 +138,40 @@ expressApp.post("/login", async (req, res) => {
 // SocketCluster/WebSocket connection handling loop.
 (async () => {
   for await (let { socket } of agServer.listener("connection")) {
-    if(isEmpty(socket.authToken)) {
+    if (isEmpty(socket.authToken)) {
       socket.disconnect(4101, "auth fail");
       return;
-    }
+    }    
 
     // Handle socket connection.
     getMessagesListener(socket);
     getRoomsListener(socket);
 
     // Handle User Status
-    createNewUserListener(socket);
+    // createNewUserListener(socket);
+    
+    (async () => {
+      for await (let data of socket.listener("authenticate")) {
+        activeUserStatus(socket.authState._id, socket.id)
+      }
+    })();
+    (async () => {
+      for await (let data of socket.listener("close")) {
+        unActiveUserStatus(socket.authState._id);
+      }
+    })();
+
   }
 })();
+
+
+
+(async () => {
+  for await (let { error } of agServer.listener("close")) {
+    console.error(`close -> error: ${error.message}`);
+  }
+})();
+
 
 httpServer.listen(SOCKETCLUSTER_PORT);
 
@@ -164,8 +185,7 @@ if (SOCKETCLUSTER_LOG_LEVEL >= 1) {
 
 if (SOCKETCLUSTER_LOG_LEVEL >= 2) {
   console.log(
-    `   ${colorText("[Active]", 32)} SocketCluster worker with PID ${
-      process.pid
+    `   ${colorText("[Active]", 32)} SocketCluster worker with PID ${process.pid
     } is listening on port ${SOCKETCLUSTER_PORT}`
   );
 
@@ -206,7 +226,7 @@ if (SCC_STATE_SERVER_HOST) {
     (async () => {
       for await (let { error } of sccClient.listener("error")) {
         error.name = "SCCError";
-        console.error(error);
+        console.error(`error: ${error.message}`);
       }
     })();
   }
