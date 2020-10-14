@@ -4,7 +4,7 @@ const servers = [
   "nats://127.0.0.1:24222",
   "nats://127.0.0.1:34222",
 ];
-const isEmpty = require("lodash/isEmpty");
+const isNull = require("lodash/isNull");
 const { TaskIndexes } = require("./onLineState/models");
 const stan = require("node-nats-streaming").connect("nats-streaming", "test", {
   servers,
@@ -27,8 +27,8 @@ stan.on("connect", function () {
   //     console.log("published message with guid: " + guid);
   //   }
   // });
-  const getIndexItem = (item) => {
-    if (isEmpty(item)) {
+  const getIndexItem = (item = null) => {
+    if (isNull(item)) {
       const indexItem = new TaskIndexes({ id: "foo", sequence: 0 });
       indexItem.save();
       return indexItem;
@@ -36,6 +36,8 @@ stan.on("connect", function () {
     return item;
   };
   TaskIndexes.findOne({ where: { id: "foo" } }, (error, item) => {
+  console.log("item", item)
+  console.log("error", error)
     const indexItem = getIndexItem(item);
 
     const opts = stan.subscriptionOptions().setDeliverAllAvailable();
