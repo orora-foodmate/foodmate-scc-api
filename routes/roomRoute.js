@@ -9,8 +9,8 @@ router.get('/', async (req, res) => {
     const { user } = req;
     const rooms = await roomModel
       .find({ users: { $in: [user._id] }, ...condition })
-      .populate({ path: "users", select: "account name" })
-      .populate({ path: "creator", select: "account name" })
+      .populate({ path: "users", select: "account name avatar" })
+      .populate({ path: "creator", select: "account name avatar" })
       .exec();
 
     return res.status(200).json({

@@ -2,10 +2,10 @@
 
 @domain = {{DEV}}
 @jsonContentType = application/json
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Zjc0MzJmZGQyMDQ4ZDEzMDE2NzdiZTMiLCJhY2NvdW50IjoiaG9yc2VraXQxOTgyQGdtYWlsLmNvbSIsImF2YXRhciI6Imh0dHA6Ly9jbGlwYXJ0LWxpYnJhcnkuY29tL2ltYWdlcy82Y3BveTc4cmkucG5nIiwibmFtZSI6InRvbWFzMSIsImlhdCI6MTYwMjYwODEzNH0.fX4Ls5KIZ5E2S6seTEpWFEgkeQMk70mDSN0iyvGhQFg
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjczMDM4YWEzODU4ZmIxOTUzM2YxMTMiLCJhY2NvdW50IjoiaG9yc2VraXQxOTgyQGdtYWlsLmNvbSIsImF2YXRhciI6Imh0dHA6Ly9jbGlwYXJ0LWxpYnJhcnkuY29tL2ltYWdlcy82Y3BveTc4cmkucG5nIiwibmFtZSI6InRvbWFzMSIsImlhdCI6MTYwMjczNDI3NX0.3uegDOKBe_-42G4UxdYrAoV3A0-ejLtMsCviR5ZeKGE
 @userId = 5f73037ca3858fb19533f111
 @friendId = 5f73038aa3858fb19533f113
-@roomId = 5f743349d2048d1301677be6
+@roomId = 5f8420cccd899f2a59f24fe6
 
 ### public route
 GET {{domain}}health-check
