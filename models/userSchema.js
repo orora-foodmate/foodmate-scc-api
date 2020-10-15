@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const isEmpty = require('lodash/isEmpty');
+const { schemaOptions } = require('../constants/mongooseOptions');
+const { now, formatDateTime } = require('../helpers/dateHelper');
 const { saltHashPassword } = require('../helpers/utils');
 
 const { Schema } = mongoose;
@@ -32,13 +34,15 @@ const userSchema = new Schema({
   },
   createAt: {
     type: Date,
-    default: Date.now,
+    default: now,
+    get: formatDateTime,
   },
   updateAt: {
     type: Date,
-    default: Date.now,
+    default: now,
+    get: formatDateTime,
   },
-});
+}, schemaOptions);
 
 userSchema.pre('save',  function(next) {
   let user = this;
@@ -52,7 +56,7 @@ userSchema.pre('save',  function(next) {
 
 userSchema.pre('save',  function(next) {
   let user = this;
-  user.updateAt = Date.now();
+  user.updateAt = now();
   next();
 });
 

@@ -2,8 +2,12 @@
 <html>
   <head>
     <title>SocketCluster</title>
-    <link href="//fonts.googleapis.com/css?family=Roboto:100,300" rel="stylesheet" type="text/css">
-    <link rel="icon" type="image/png" href="/favicon.ico">
+    <link
+      href="//fonts.googleapis.com/css?family=Roboto:100,300"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link rel="icon" type="image/png" href="/favicon.ico" />
     <script type="text/javascript" src="/socketcluster-client.js"></script>
     <style>
       html {
@@ -21,7 +25,7 @@
       }
       a {
         font-weight: 300;
-        color: #72B963;
+        color: #72b963;
       }
       .container {
         display: table-cell;
@@ -51,47 +55,64 @@
   <body>
     <div class="container">
       <div class="content">
-        <div class="title">
-          SocketCluster
-        </div>
+        <div class="title">SocketCluster</div>
         <div class="small">
-          <a href="https://socketcluster.io/docs/guides/">Guides</a> <strong>&middot;</strong>
+          <a href="https://socketcluster.io/docs/guides/">Guides</a>
+          <strong>&middot;</strong>
           <a href="https://socketcluster.io/docs/api/">API Docs</a>
         </div>
         <p class="github-button">
-          <iframe src="https://ghbtns.com/github-btn.html?user=socketcluster&repo=socketcluster&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+          <iframe
+            src="https://ghbtns.com/github-btn.html?user=socketcluster&repo=socketcluster&type=star&count=true&size=large"
+            frameborder="0"
+            scrolling="0"
+            width="160px"
+            height="30px"
+          ></iframe>
         </p>
       </div>
     </div>
     <script type="text/javascript">
-    localStorage.setItem('socketcluster.authToken', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Zjc0MzJmZGQyMDQ4ZDEzMDE2NzdiZTMiLCJhY2NvdW50IjoiaG9yc2VraXQxOTgyQGdtYWlsLmNvbSIsImF2YXRhciI6Imh0dHA6Ly9jbGlwYXJ0LWxpYnJhcnkuY29tL2ltYWdlcy82Y3BveTc4cmkucG5nIiwibmFtZSI6InRvbWFzMSIsImlhdCI6MTYwMTQ4Mzc4MX0.E9LWY6rTNE4Oy_ACylwcFWr-neDro9k7wZ0ufp60LcE")
+      localStorage.setItem(
+        'socketcluster.authToken',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Zjc0MzJmZGQyMDQ4ZDEzMDE2NzdiZTMiLCJhY2NvdW50IjoiaG9yc2VraXQxOTgyQGdtYWlsLmNvbSIsImF2YXRhciI6Imh0dHA6Ly9jbGlwYXJ0LWxpYnJhcnkuY29tL2ltYWdlcy82Y3BveTc4cmkucG5nIiwibmFtZSI6InRvbWFzMSIsImlhdCI6MTYwMTQ4Mzc4MX0.E9LWY6rTNE4Oy_ACylwcFWr-neDro9k7wZ0ufp60LcE'
+      )
 
       // Initiate the connection to the server
-      let socket = socketClusterClient.create();
+      let socket = socketClusterClient.create()
 
-      (async () => {
-        for await (let {error} of socket.listener('error')) {
-          console.error(error);
+      ;(async () => {
+        for await (let { error } of socket.listener('error')) {
+          console.error(error)
         }
-      })();
+      })()
 
-      (async () => {
+      ;(async () => {
         for await (let event of socket.listener('connect')) {
-          console.log('Socket is connected');
+          console.log('Socket is connected')
         }
-      })();
+      })()
 
+      
       // (async () => {
       //   let result = await socket.invoke('getMessages', {roomId: "5f743349d2048d1301677be6", startDateTime: "2020-09-30 22:00:00"});
       //   console.log("result", result)
       //   // result will be 'Success'
       // })();
-      
-      (async () => {
-        let result = await socket.invoke('getRooms', {updateAt: "2020-09-30T07:27:09.605Z"});
-        console.log("result", result)
+
+      ;(async () => {
+        // try {
+        //   let result = await socket.invoke('createNewUserStatus', {
+        //     userId: 'userId1',
+        //   })
+        //   console.log('result', result)
+        // } catch (error) {
+        //   console.log('error', error)
+        // }
+        // let result = await socket.invoke('createNewUserStatus', {updateAt: "2020-09-30T07:27:09.605Z"});
+        // console.log("result", result)
         // result will be 'Success'
-      })();
+      })()
     </script>
   </body>
 </html>

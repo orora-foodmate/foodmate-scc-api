@@ -4,31 +4,15 @@ const servers = [
   "nats://127.0.0.1:24222",
   "nats://127.0.0.1:34222",
 ];
-const isNull = require("lodash/isNull");
+const isEmpty = require("lodash/isEmpty");
 const { TaskIndexes } = require("./onLineState/models");
 const stan = require("node-nats-streaming").connect("nats-streaming", "test", {
   servers,
 });
 
 stan.on("connect", function () {
-  // // Simple Publisher (all publishes are async in the node version of the client)
-  // stan.publish('foo', 'Hello node-nats-streaming!!', function(err, guid){
-  //   if(err) {
-  //     console.log('publish failed: ' + err);
-  //   } else {
-  //     console.log('published message with guid: ' + guid);
-  //   }
-  // });
-
-  // stan.publish("foo", "Hello node-nats-streaming!", (err, guid) => {
-  //   if (err) {
-  //     console.log("publish failed: " + err);
-  //   } else {
-  //     console.log("published message with guid: " + guid);
-  //   }
-  // });
-  const getIndexItem = (item = null) => {
-    if (isNull(item)) {
+  const getIndexItem = (item) => {
+    if (isEmpty(item)) {
       const indexItem = new TaskIndexes({ id: "foo", sequence: 0 });
       indexItem.save();
       return indexItem;
@@ -36,8 +20,6 @@ stan.on("connect", function () {
     return item;
   };
   TaskIndexes.findOne({ where: { id: "foo" } }, (error, item) => {
-  console.log("item", item)
-  console.log("error", error)
     const indexItem = getIndexItem(item);
 
     const opts = stan.subscriptionOptions().setDeliverAllAvailable();
@@ -59,17 +41,8 @@ stan.on("connect", function () {
       msg.ack();
     });
   });
-  // // Subscriber can specify how many existing messages to get.
-
-  // // After one second, unsubscribe, when that is done, close the connection
-  // setTimeout(function() {
-  //   subscription.unsubscribe();
-  //   subscription.on('unsubscribed', function() {
-  //     stan.close();
-  //   });
-  // }, 1000);
 });
 
-stan.on("close", function () {
-  process.exit();
-});
+// stan.on("close", function () {
+//   process.exit();
+// });

@@ -1,16 +1,19 @@
 const isEmpty = require('lodash/isEmpty');
-const mongoose = require('mongoose');
 const { roomModel, friendModel } = require('../../models');
 
-const approveFriendTransaction = async (friendId) => {
+const approveFriendTransaction = async (userId, friendId) => {
   const session = await friendModel.startSession();
   await session.startTransaction();
-
   try {
     const friendRecord = await friendModel.findOne({ _id: friendId }).session(session);
 
+    const creatorId = friendRecord.creator.toString();
     if(isEmpty(friendRecord)) {
       throw new Error('不存在');
+    }
+
+    if(userId === creatorId) {
+      throw new Error('建立者不能同意關係');
     }
 
     if(friendRecord.status !== 1) {

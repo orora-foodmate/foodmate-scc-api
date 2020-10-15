@@ -56,19 +56,28 @@ expressApp.use(express.json());
 expressApp.use(express.urlencoded({ extended: false }));
 expressApp.use(cookieParser());
 
+expressApp.use((req, _, next) => {
+  req.exchange = agServer.exchange;
+  next();
+});
+
 const tokenVerifyMiddleware = require('./helpers/tokenVerify');
 const userRoute = require("./routes/userRoute");
+const roomRoute = require('./routes/roomRoute');
 const friendRoute = require("./routes/friendRoute");
 const messageRoute = require("./routes/messageRoute");
 
-const { userModel, messageModel } = require("./models");
+const { userModel } = require("./models");
 const { saltHashPassword } = require("./helpers/utils");
-const { getMessagesLisenter } = require("./socketEvents/messageEvents");
-const { getRoomsLisenter } = require("./socketEvents/roomEvents");
+const { getMessagesListener } = require("./socketEvents/messageEvents");
+const { getRoomsListener } = require("./socketEvents/roomEvents");
+const { activeUserStatus, unActiveUserStatus } = require('./onLineState/app');
 
 expressApp.use("/users", userRoute);
 expressApp.use("/friends", tokenVerifyMiddleware, friendRoute);
 expressApp.use("/messages", tokenVerifyMiddleware, messageRoute);
+expressApp.use("/rooms", tokenVerifyMiddleware, roomRoute);
+
 
 // Add GET /health-check express route
 expressApp.get("/health-check", tokenVerifyMiddleware, (req, res) => {
@@ -76,32 +85,47 @@ expressApp.get("/health-check", tokenVerifyMiddleware, (req, res) => {
 });
 
 expressApp.post("/login", async (req, res) => {
-  const { account, password } = req.body;
-  const user = await userModel.findOne({ account });
-  const hashPassword = saltHashPassword(password, process.env.SALT_SECRET);
+  try {
+    const { account, password } = req.body;
+    const user = await userModel.findOne({ account });
 
-  if (user.hashPassword !== hashPassword) {
-    return res.status(401).json({
-      success: false,
+    if (isEmpty(user)) {
+      return res.status(400).json({
+        success: false,
+        data: {
+          message: '使用者不存在'
+        }
+      })
+    }
+
+    const hashPassword = saltHashPassword(password, process.env.SALT_SECRET);
+
+    if (user.hashPassword !== hashPassword) {
+      return res.status(401).json({
+        success: false,
+        data: {
+          message: "authorization fail",
+        },
+      });
+    }
+
+    const myTokenData = pick(user, ["_id", "account", "avatar", "name"]);
+    const signedTokenString = await agServer.auth.signToken(
+      myTokenData,
+      agServer.signatureKey
+    );
+
+    res.status(200).json({
+      success: true,
       data: {
-        message: "authorization fail",
+        ...myTokenData,
+        token: signedTokenString,
       },
     });
+  } catch (error) {
+    res.status(500).json({ success: false, data: { message: error.message } })
   }
 
-  const myTokenData = pick(user, ["_id", "account", "avatar", "name"]);
-  const signedTokenString = await agServer.auth.signToken(
-    myTokenData,
-    agServer.signatureKey
-  );
-
-  res.status(200).json({
-    success: true,
-    data: {
-      ...myTokenData,
-      token: signedTokenString,
-    },
-  });
 });
 
 // HTTP request handling loop.
@@ -114,17 +138,40 @@ expressApp.post("/login", async (req, res) => {
 // SocketCluster/WebSocket connection handling loop.
 (async () => {
   for await (let { socket } of agServer.listener("connection")) {
-    if(isEmpty(socket.authToken)) {
-      console.log("forawait -> isEmpty(socket.authToken)", isEmpty(socket.authToken))
+    if (isEmpty(socket.authToken)) {
       socket.disconnect(4101, "auth fail");
       return;
-    }
+    }    
 
     // Handle socket connection.
-    getMessagesLisenter(socket);
-    getRoomsLisenter(socket);
+    getMessagesListener(socket);
+    getRoomsListener(socket);
+
+    // Handle User Status
+    // createNewUserListener(socket);
+    
+    (async () => {
+      for await (let data of socket.listener("authenticate")) {
+        activeUserStatus(socket.authState._id, socket.id)
+      }
+    })();
+    (async () => {
+      for await (let data of socket.listener("close")) {
+        unActiveUserStatus(socket.authState._id);
+      }
+    })();
+
   }
 })();
+
+
+
+(async () => {
+  for await (let { error } of agServer.listener("close")) {
+    console.error(`close -> error: ${error.message}`);
+  }
+})();
+
 
 httpServer.listen(SOCKETCLUSTER_PORT);
 
@@ -138,8 +185,7 @@ if (SOCKETCLUSTER_LOG_LEVEL >= 1) {
 
 if (SOCKETCLUSTER_LOG_LEVEL >= 2) {
   console.log(
-    `   ${colorText("[Active]", 32)} SocketCluster worker with PID ${
-      process.pid
+    `   ${colorText("[Active]", 32)} SocketCluster worker with PID ${process.pid
     } is listening on port ${SOCKETCLUSTER_PORT}`
   );
 
@@ -180,7 +226,7 @@ if (SCC_STATE_SERVER_HOST) {
     (async () => {
       for await (let { error } of sccClient.listener("error")) {
         error.name = "SCCError";
-        console.error(error);
+        console.error(`error: ${error.message}`);
       }
     })();
   }

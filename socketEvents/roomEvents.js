@@ -2,25 +2,24 @@ const mongoose = require('mongoose');
 const { roomModel } = require("../models");
 const isNull = require("lodash/isNull");
 
-const getRoomsLisenter = async (socket) => {
-  console.log("getRoomsLisenter -> socket.authToken", socket.authToken)
+const getRoomsListener = async (socket) => {
   // Set up a loop to handle and respond to RPCs.
   for await (let request of socket.procedure('getRooms')) {
-    const {_id: userId} = socket.authToken;
-    const {updateAt = null} = request.data;
+    const { _id: userId } = socket.authToken;
+    const { updateAt = null } = request.data;
     // const {roomId, startDateTime} = request.data;
     // const date = startOfDay(new Date(startDateTime));
 
     try {
       const queryPayload = {
-        "users": {
-          "$in": mongoose.Types.ObjectId(userId)
+        users: {
+          $in: mongoose.Types.ObjectId(userId)
         },
       };
 
-      if(!isNull(updateAt)) {
+      if (!isNull(updateAt)) {
         queryPayload.updateAt = {
-          "$gte": new Date(updateAt)
+          $gte: new Date(updateAt)
         };
       };
 
@@ -32,4 +31,4 @@ const getRoomsLisenter = async (socket) => {
   }
 }
 
-module.exports.getRoomsLisenter = getRoomsLisenter;
+module.exports.getRoomsListener = getRoomsListener;
