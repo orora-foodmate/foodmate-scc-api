@@ -6,21 +6,30 @@ const createNewUserStatus = (userId) => {
     id: userId,
   });
   user.save();
+  return user;
 };
 
 const activeUserStatus = (userId, socketId) => {
   User.findOne({ where: { id: userId } }, (error, user) => {
-    user.socketId = socketId;
-    user.active = true;
-    user.save();
+    const localUser = isNull(user)
+      ? createNewUserStatus(userId)
+      : user;
+    
+    localUser.socketId = socketId;
+    localUser.active = true;
+    localUser.save();
   });
 }
 
 const unActiveUserStatus = (userId) => {
   User.findOne({ where: { id: userId } }, (error, user) => {
-    user.socketId = '';
-    user.active = false;
-    user.save();
+    const localUser = isNull(user)
+      ? createNewUserStatus(userId)
+      : user;
+    
+    localUser.socketId = null;
+    localUser.active = false;
+    localUser.save();
   });
 }
 

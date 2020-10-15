@@ -19,6 +19,7 @@ stan.on("connect", function () {
     }
     return item;
   };
+
   TaskIndexes.findOne({ where: { id: "foo" } }, (error, item) => {
     const indexItem = getIndexItem(item);
 
@@ -26,7 +27,6 @@ stan.on("connect", function () {
     opts.setManualAckMode(true);
     opts.setAckWait(60 * 1000); // 60s
     opts.setStartAtSequence(indexItem.sequence);
-    console.log("indexItem.sequence", indexItem.sequence)
 
     const subscription = stan.subscribe("foo", "foo.workers", opts);
     
