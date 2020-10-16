@@ -90,20 +90,24 @@ router.post("/:roomId", async (req, res) => {
       messageResult.messages.push(newMessage);
       await messageResult.save();
     }
+    const responseData = {
+      ...newMessage,
+      _id: undefined,
+      id: newMessage._id,
+      createAt: formatDateTime(createAt),
+      user: {
+        id: user._id,
+        name: user.name,
+        avatar: user.avatar,
+      },
+    };
+
+    // Todo: 如果未來ws 拆出去要透過 exchange 溝通 services
+    req.exchange.transmitPublish(`room.newMessage.${roomId}`, responseData);
 
     return res.status(200).json({
       success: true,
-      data: {
-        ...newMessage,
-        _id: undefined,
-        id: newMessage._id,
-        createAt: formatDateTime(createAt),
-        user: {
-          id: user._id,
-          name: user.name,
-          avatar: user.avatar,
-        },
-      },
+      data: responseData,
     });
   } catch (error) {
     res.status(500).json({
