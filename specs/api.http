@@ -3,7 +3,7 @@
 @domain = {{DEV}}
 @jsonContentType = application/json
 @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjczMDM3Y2EzODU4ZmIxOTUzM2YxMTEiLCJhY2NvdW50IjoidGhvbWFzbGluMDcxMEBnbWFpbC5jb20iLCJhdmF0YXIiOiJodHRwOi8vY2xpcGFydC1saWJyYXJ5LmNvbS9pbWFnZXMvNmNwb3k3OHJpLnBuZyIsIm5hbWUiOiJ0b21hczIiLCJpYXQiOjE2MDI4MjY3ODd9.0BlUo965pDRU_cmIcvlXGKXnfsJqCamYBmYVT3yklTs
-@userId = 5f73037ca3858fb19533f111
+@userId = 5f86b4e39877615b95f5ced1
 @friendId = 5f73038aa3858fb19533f113
 @roomId = 5f8420cccd899f2a59f24fe6
 

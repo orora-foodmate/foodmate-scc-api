@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const { messageModel, roomModel } = require("../models");
 const { startOfDay } = require("../helpers/dateHelper");
 
+const addNewMessageListener = async(socket) => {
+
+}
+
 const getMessagesListener = async (socket) => {
   // Set up a loop to handle and respond to RPCs.
   for await (let request of socket.procedure('getMessages')) {

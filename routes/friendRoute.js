@@ -15,10 +15,10 @@ router.get('/', async (req, res) => {
       .populate({ path: "creator", select: "account name" })
       .exec();
 
-  return res.status(200).json({
-    success: true,
-    data: { friends },
-  });
+    return res.status(200).json({
+      success: true,
+      data: { friends },
+    });
   } catch (error) {
 
     return res.status(200).json({
@@ -26,8 +26,6 @@ router.get('/', async (req, res) => {
       data: { message: error.message },
     });
   }
-
-
 });
 
 router.post('/approve/:friendId', async (req, res) => {
@@ -75,7 +73,7 @@ router.post('/invite/:userId', async (req, res) => {
   const { userId } = req.params;
   const creator = req.user._id;
 
-  if(creator.toString() === userId) {
+  if (creator.toString() === userId) {
     return res.status(500).json({
       success: false,
       data: { message: '邀請者與被邀請者不可相同' }
