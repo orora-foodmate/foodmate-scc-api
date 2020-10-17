@@ -18,13 +18,14 @@ router.get('/:id', tokenVerifyMiddleware, async (req, res) => {
       }, { status: 1, creator: 1 })
     ]);
 
-    const [status, creator] = isNull(friend)
-      ? [0, null]
-      : [friend.status, friend.creator];
-    console.log('friend', friend)
+    const [status, creator, friendId] = isNull(friend)
+    ? [0, null, null]
+    : [friend.status, friend.creator, friend.id];
+    console.log("friendId", friendId)
+
     return res.status(200).json({
       success: true,
-      data: { ...user.toJSON(), status, friendCreatorId: creator }
+      data: { ...user.toJSON(), friendId, status, friendCreatorId: creator }
     });
   } catch (error) {
     return res.status(200).json({
