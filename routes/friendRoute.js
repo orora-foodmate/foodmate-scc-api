@@ -73,6 +73,7 @@ router.post("/reject/:friendId", async (req, res) => {
 router.post("/invite/:userId", async (req, res) => {
   const { userId } = req.params;
   const creatorString = req.user._id.toString();
+  console.log("creatorString", creatorString)
 
   if (creatorString === userId) {
     return res.status(500).json({
