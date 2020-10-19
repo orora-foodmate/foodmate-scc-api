@@ -18,8 +18,8 @@ router.get("/", async (req, res) => {
 
     const result = friends.map(f => {
       const userItem = f.users.find(u => u.id !== user._id);
-      const friendItem = pick(f, ['status', 'createAt', 'updateAt', 'creator']);
-      return { ...userItem.toJSON(), ...friendItem };
+      const friendItem = pick(f, ['status', 'createAt', 'updateAt', 'creator', 'room']);
+      return { ...userItem.toJSON(), ...friendItem, friendId: f.id };
     });
 
     return res.status(200).json({
@@ -27,7 +27,7 @@ router.get("/", async (req, res) => {
       data: { friends: result },
     });
   } catch (error) {
-    return res.status(200).json({
+    return res.status(500).json({
       success: true,
       data: { message: error.message },
     });
@@ -35,11 +35,13 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/approve/:friendId", async (req, res) => {
+  console.log(11);
   const { user } = req;
   const { friendId } = req.params;
   try {
+    console.log(22);
     const result = await approveFriendTransaction(user._id, friendId);
-
+    console.log(33);
     return res.status(200).json({
       success: true,
       data: result,
@@ -55,16 +57,15 @@ router.post("/approve/:friendId", async (req, res) => {
 router.post("/reject/:friendId", async (req, res) => {
   const { friendId } = req.params;
   try {
-    console.log(1)
     const oldRecord = await friendModel.findFriendById(friendId);
-    console.log("oldRecord", oldRecord)
+
     if (isEmpty(oldRecord) || oldRecord.status !== 1) {
       throw new Error("狀態錯誤");
     }
-    console.log(2)
+
     oldRecord.status = 0;
     const result = await oldRecord.save();
-    console.log(3)
+
     return res.status(200).json({
       success: true,
       data: result,
@@ -100,7 +101,7 @@ router.post("/invite/:userId", async (req, res) => {
       status: 1,
     });
 
-    const friend = friendModel.findFriend({ _id: id });
+    const friend = await friendModel.findFriend({ _id: id });
     return res.status(200).json({
       success: true,
       data: friend,
@@ -108,6 +109,7 @@ router.post("/invite/:userId", async (req, res) => {
   }
 
   if (oldRecord.status === 0) {
+    console.log("oldRecord", oldRecord)
     oldRecord.status = 1;
     oldRecord.creator = creatorString;
     const result = await oldRecord.save();

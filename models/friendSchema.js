@@ -3,7 +3,7 @@ const { schemaOptions } = require("../constants/mongooseOptions");
 const { now, formatDateTime } = require("../helpers/dateHelper");
 const { Schema } = mongoose;
 
-const userSelectFields = 'account name avatar';
+const userSelectFields = 'account name avatar room';
 const friendSchema = new Schema(
   {
     users: [
@@ -64,6 +64,7 @@ friendSchema.statics.findFriend = function findFriend(query, options) {
 };
 
 friendSchema.statics.findFriendById = function findFriendById(friendId) {
+  console.log("findFriendById -> friendId", friendId)
   return this.findById(friendId)
     .populate({ path: "users", select: userSelectFields })
     .populate({ path: "creator", select: userSelectFields })
