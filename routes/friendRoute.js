@@ -1,22 +1,30 @@
 const express = require("express");
 const { friendModel } = require("../models");
 const isEmpty = require("lodash/isEmpty");
+const pick = require("lodash/pick");
 const { approveFriendTransaction } = require("../helpers/transactions");
 const { getConditionByQuery } = require("../helpers/utils");
 const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
-    const condition = getConditionByQuery(req.query);
     const { user } = req;
+    const condition = getConditionByQuery(req.query);
     const friends = await friendModel.findFriends({
+      status: { $ne: 0 },
       users: { $in: [user._id] },
       ...condition,
     });
 
+    const result = friends.map(f => {
+      const userItem = f.users.find(u => u.id !== user._id);
+      const friendItem = pick(f, ['status', 'createAt', 'updateAt', 'creator']);
+      return { ...userItem.toJSON(), ...friendItem };
+    });
+
     return res.status(200).json({
       success: true,
-      data: { friends },
+      data: { friends: result },
     });
   } catch (error) {
     return res.status(200).json({
@@ -61,7 +69,6 @@ router.post("/reject/:friendId", async (req, res) => {
       success: true,
       data: result,
     });
-    console.log(4)
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -84,11 +91,12 @@ router.post("/invite/:userId", async (req, res) => {
 
   const users = [userId, creatorString];
   const oldRecord = await friendModel.findFriend({ users });
+  console.log('oldRecord', oldRecord)
 
   if (isEmpty(oldRecord)) {
     const { id } = await friendModel.create({
       users,
-      creator,
+      creator: creatorString,
       status: 1,
     });
 

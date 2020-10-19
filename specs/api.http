@@ -37,7 +37,7 @@ Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
 ### get friends
-GET {{domain}}friends?updateAt=2020-11-07%2011%3A41%3A18
+GET {{domain}}friends
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
