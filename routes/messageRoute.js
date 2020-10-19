@@ -4,19 +4,16 @@ const isEmpty = require("lodash/isEmpty");
 const pick = require("lodash/pick");
 const {getConditionByQuery} = require('../helpers/utils');
 const { startOfDay, now, formatDateTime } = require("../helpers/dateHelper");
-const { roomModel, messageModel } = require("../models");
+const { messageModel, friendModel } = require("../models");
+
 const router = express.Router();
-
-const getDateTimeRange = (query) => {
-
-}
 
 router.get("/:roomId", async (req, res) => {
   try {
     const { roomId } = req.params;
     const { user } = req;
 
-    const room = await roomModel.findById(roomId);
+    const room = await friendModel.findOne({room: roomId});
     if (isEmpty(room)) {
       throw new Error("房間不存在")
     }
@@ -55,7 +52,7 @@ router.post("/:roomId", async (req, res) => {
     const { roomId } = req.params;
     const { user, body } = req;
 
-    const room = await roomModel.findById(roomId);
+    const room = await friendModel.findOne({room: roomId});
     if (isEmpty(room)) {
       throw new Error("房間不存在")
     }
