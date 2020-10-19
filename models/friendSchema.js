@@ -17,6 +17,10 @@ const friendSchema = new Schema(
       ref: "users",
       required: true,
     },
+    room: {
+      type: Schema.Types.ObjectId,
+      default: mongoose.Types.ObjectId(),
+    },
     createAt: {
       type: Date,
       default: now,
