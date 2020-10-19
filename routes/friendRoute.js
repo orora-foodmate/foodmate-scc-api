@@ -35,13 +35,10 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/approve/:friendId", async (req, res) => {
-  console.log(11);
   const { user } = req;
   const { friendId } = req.params;
   try {
-    console.log(22);
     const result = await approveFriendTransaction(user._id, friendId);
-    console.log(33);
     return res.status(200).json({
       success: true,
       data: result,
