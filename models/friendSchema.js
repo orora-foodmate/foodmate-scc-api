@@ -65,15 +65,21 @@ friendSchema.statics.findFriend = function findFriend(query, options) {
 };
 
 friendSchema.statics.findFriendById = function findFriendById(friendId) {
-  console.log("findFriendById -> friendId", friendId)
   return this.findById(friendId)
     .populate({ path: "users", select: userSelectFields })
     .populate({ path: "creator", select: userSelectFields })
     .exec();
 };
 
+friendSchema.statics.findFriendByUsers = function findFriendByUsers(userId, targetUserId) {
+return this.findFriend({$or: [
+  {users: [userId, targetUserId]},
+  {users: [targetUserId, userId]},
+]})
+}
+
 friendSchema.methods.toFriend = function toFriend(userId) {
-  const userItem = this.users.find(u => u.id !== userId);
+  const userItem = this.users.find(u => u.id.toString() !== userId);
   const friendItem = pick(this, ['status', 'createAt', 'updateAt']);
   return {
     ...userItem.toJSON(),

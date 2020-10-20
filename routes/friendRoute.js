@@ -16,7 +16,7 @@ router.get("/", async (req, res) => {
       ...condition,
     });
 
-    const result = friends.map(item => item.toFriend());
+    const result = friends.map(item => item.toFriend(user._id.toString()));
 
     return res.status(200).json({
       success: true,
@@ -37,7 +37,7 @@ router.post("/approve/:friendId", async (req, res) => {
     const result = await approveFriendTransaction(user._id, friendId);
     return res.status(200).json({
       success: true,
-      data: result.toFriend(),
+      data: result.toFriend(user._id.toString()),
     });
   } catch (error) {
     return res.status(500).json({
@@ -61,7 +61,7 @@ router.post("/reject/:friendId", async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      data: result.toFriend(),
+      data: result.toFriend(req.user._id.toString()),
     });
   } catch (error) {
     return res.status(500).json({
@@ -72,48 +72,42 @@ router.post("/reject/:friendId", async (req, res) => {
 });
 
 router.post("/invite/:userId", async (req, res) => {
-  const { userId } = req.params;
-  const creatorString = req.user._id.toString();
+  try {
+    const { userId } = req.params;
+    const creatorString = req.user._id.toString();
+  
+    if (creatorString === userId) {
+      throw new Error("邀請者與被邀請者不可相同")
+    }
+  
+    const users = [userId, creatorString];
+    const oldRecord = await friendModel.findFriendByUsers(userId, creatorString);
+  
+    if (isEmpty(oldRecord)) {
+      await friendModel.create({
+        users,
+        creator: creatorString,
+        status: 1,
+      });
+    }
+  
+    if (oldRecord.status === 0) {
+      oldRecord.status = 1;
+      oldRecord.creator = creatorString;
+      await oldRecord.save();
+    }
 
-  if (creatorString === userId) {
+    const friend = await friendModel.findFriend({ users });
+      return res.status(200).json({
+        success: true,
+        data: friend.toFriend(creatorString),
+      });
+  } catch(error) {
     return res.status(500).json({
       success: false,
-      data: { message: "邀請者與被邀請者不可相同" },
+      data: { message: error.message },
     });
   }
-
-  const users = [userId, creatorString];
-  const oldRecord = await friendModel.findFriend({ users });
-
-  if (isEmpty(oldRecord)) {
-    const { id } = await friendModel.create({
-      users,
-      creator: creatorString,
-      status: 1,
-    });
-
-    const friend = await friendModel.findFriend({ _id: id });
-    return res.status(200).json({
-      success: true,
-      data: friend.toFriend(),
-    });
-  }
-
-  if (oldRecord.status === 0) {
-    oldRecord.status = 1;
-    oldRecord.creator = creatorString;
-    const result = await oldRecord.save();
-
-    return res.status(200).json({
-      success: true,
-      data: result.toFriend(),
-    });
-  }
-
-  return res.status(500).json({
-    success: false,
-    data: { message: "狀態錯誤" },
-  });
 });
 
 module.exports = router;
