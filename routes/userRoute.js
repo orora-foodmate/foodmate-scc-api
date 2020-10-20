@@ -11,11 +11,7 @@ router.get('/:id', tokenVerifyMiddleware, async (req, res) => {
     const { id } = req.params;
     const [user, friend = null] = await Promise.all([
       userModel.findById(id, { password: false, hashPassword: false }),
-      friendModel.findOne({
-        users: {
-          $in: [id, req.user.id]
-        }
-      }, { status: 1, creator: 1 })
+      friendModel.findFriendByUsers(id, req.user._id.toString())
     ]);
 
     const [status, creator, friendId] = isNull(friend)
