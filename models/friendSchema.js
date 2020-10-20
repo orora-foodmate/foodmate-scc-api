@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const pick = require('lodash/pick');
 const { schemaOptions } = require("../constants/mongooseOptions");
 const { now, formatDateTime } = require("../helpers/dateHelper");
 const { Schema } = mongoose;
@@ -70,5 +71,16 @@ friendSchema.statics.findFriendById = function findFriendById(friendId) {
     .populate({ path: "creator", select: userSelectFields })
     .exec();
 };
+
+friendSchema.methods.toFriend = function toFriend(userId) {
+  const userItem = this.users.find(u => u.id !== userId);
+  const friendItem = pick(this, ['status', 'createAt', 'updateAt']);
+  return {
+    ...userItem.toJSON(),
+    ...friendItem,
+    friendId: this.id,
+    creator: this.creator,
+   };
+}
 
 module.exports = friendSchema;

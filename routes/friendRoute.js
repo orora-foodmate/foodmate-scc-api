@@ -16,11 +16,7 @@ router.get("/", async (req, res) => {
       ...condition,
     });
 
-    const result = friends.map(f => {
-      const userItem = f.users.find(u => u.id !== user._id);
-      const friendItem = pick(f, ['status', 'createAt', 'updateAt', 'creator', 'room']);
-      return { ...userItem.toJSON(), ...friendItem, friendId: f.id };
-    });
+    const result = friends.map(item => item.toFriend());
 
     return res.status(200).json({
       success: true,
@@ -41,7 +37,7 @@ router.post("/approve/:friendId", async (req, res) => {
     const result = await approveFriendTransaction(user._id, friendId);
     return res.status(200).json({
       success: true,
-      data: result,
+      data: result.toFriend(),
     });
   } catch (error) {
     return res.status(500).json({
@@ -65,7 +61,7 @@ router.post("/reject/:friendId", async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      data: result,
+      data: result.toFriend(),
     });
   } catch (error) {
     return res.status(500).json({
@@ -78,7 +74,6 @@ router.post("/reject/:friendId", async (req, res) => {
 router.post("/invite/:userId", async (req, res) => {
   const { userId } = req.params;
   const creatorString = req.user._id.toString();
-  console.log("creatorString", creatorString)
 
   if (creatorString === userId) {
     return res.status(500).json({
@@ -89,7 +84,6 @@ router.post("/invite/:userId", async (req, res) => {
 
   const users = [userId, creatorString];
   const oldRecord = await friendModel.findFriend({ users });
-  console.log('oldRecord', oldRecord)
 
   if (isEmpty(oldRecord)) {
     const { id } = await friendModel.create({
@@ -101,19 +95,18 @@ router.post("/invite/:userId", async (req, res) => {
     const friend = await friendModel.findFriend({ _id: id });
     return res.status(200).json({
       success: true,
-      data: friend,
+      data: friend.toFriend(),
     });
   }
 
   if (oldRecord.status === 0) {
-    console.log("oldRecord", oldRecord)
     oldRecord.status = 1;
     oldRecord.creator = creatorString;
     const result = await oldRecord.save();
 
     return res.status(200).json({
       success: true,
-      data: result,
+      data: result.toFriend(),
     });
   }
 

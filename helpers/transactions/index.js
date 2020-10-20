@@ -19,9 +19,7 @@ const approveFriendTransaction = async (userId, friendId) => {
     friendRecord.status = 2;
     await friendRecord.save();
 
-    return {
-      friend: friendRecord,
-    };
+    return friendRecord;
   } catch (error) {
     throw error;
   }
