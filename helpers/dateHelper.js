@@ -4,7 +4,7 @@ const isNull = require('lodash/isNull');
 const { zonedTimeToUtc, utcToZonedTime } = require('date-fns-tz');
 
 const DEFAULT_TIME_ZONE = 'Asia/Taipei';
-const DEFAULT_FORMAT_DATE_TIME = 'yyyy-MM-dd HH:mm:ss.SSS';
+const DEFAULT_FORMAT_DATE_TIME = 'yyyy-MM-dd HH:mm:ss';
 
 module.exports.startOfDay = (date = null, timeZone = DEFAULT_TIME_ZONE) =>
   isNull(date)

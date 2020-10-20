@@ -80,7 +80,7 @@ return this.findFriend({$or: [
 
 friendSchema.methods.toFriend = function toFriend(userId) {
   const userItem = this.users.find(u => u.id.toString() !== userId);
-  const friendItem = pick(this, ['status', 'createAt', 'updateAt']);
+  const friendItem = pick(this, ['status', 'createAt', 'updateAt', 'room']);
   return {
     ...userItem.toJSON(),
     ...friendItem,
