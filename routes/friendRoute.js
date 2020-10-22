@@ -1,7 +1,6 @@
 const express = require("express");
 const { friendModel } = require("../models");
 const isEmpty = require("lodash/isEmpty");
-const pick = require("lodash/pick");
 const { approveFriendTransaction } = require("../helpers/transactions");
 const { getConditionByQuery } = require("../helpers/utils");
 const router = express.Router();
@@ -33,11 +32,19 @@ router.get("/", async (req, res) => {
 router.post("/approve/:friendId", async (req, res) => {
   const { user } = req;
   const { friendId } = req.params;
+  const authUserId = user._id.toString();
+
   try {
-    const result = await approveFriendTransaction(user._id, friendId);
+    const friendResult = await approveFriendTransaction(user._id, friendId);
+
+    // Todo: 如果未來ws 拆出去要透過 exchange 溝通 services
+    const targetUser= friendResult.users.find(u => u.id.toString() !== authUserId);
+    const userId = targetUser.id.toString();
+    req.exchange.transmitPublish(`friend.approveFriend.${userId}`, friendResult.toFriend(userId));
+
     return res.status(200).json({
       success: true,
-      data: result.toFriend(user._id.toString()),
+      data: friendResult.toFriend(authUserId),
     });
   } catch (error) {
     return res.status(500).json({
@@ -95,12 +102,14 @@ router.post("/invite/:userId", async (req, res) => {
         creator: creatorString,
         status: 1,
       });
-    }
-
-    if (oldRecord.status === 0) {
-      oldRecord.status = 1;
-      oldRecord.creator = creatorString;
-      await oldRecord.save();
+    } else {
+      if (oldRecord.status === 0) {
+        oldRecord.status = 1;
+        oldRecord.creator = creatorString;
+        await oldRecord.save();
+      } else {
+        throw new Error('狀態錯誤');
+      }
     }
 
     const friend = await friendModel.findFriendByUsers(userId, creatorString);
@@ -113,6 +122,7 @@ router.post("/invite/:userId", async (req, res) => {
       data: friend.toFriend(creatorString),
     });
   } catch (error) {
+    console.log('error', error)
     return res.status(500).json({
       success: false,
       data: { message: error.message },
