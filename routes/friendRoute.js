@@ -59,6 +59,12 @@ router.post("/reject/:friendId", async (req, res) => {
     oldRecord.status = 0;
     const result = await oldRecord.save();
 
+    
+    // Todo: 如果未來ws 拆出去要透過 exchange 溝通 services
+    const targetUser= oldRecord.users.find(u => u.id.toString() !== req.user._id.toString());
+    const userId = targetUser.id.toString();
+    req.exchange.transmitPublish(`friend.rejectFriend.${userId}`, oldRecord.toFriend(userId));
+
     return res.status(200).json({
       success: true,
       data: result.toFriend(req.user._id.toString()),
@@ -75,14 +81,14 @@ router.post("/invite/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
     const creatorString = req.user._id.toString();
-  
+
     if (creatorString === userId) {
       throw new Error("邀請者與被邀請者不可相同")
     }
-  
+
     const users = [userId, creatorString];
     const oldRecord = await friendModel.findFriendByUsers(userId, creatorString);
-  
+
     if (isEmpty(oldRecord)) {
       await friendModel.create({
         users,
@@ -90,19 +96,23 @@ router.post("/invite/:userId", async (req, res) => {
         status: 1,
       });
     }
-  
+
     if (oldRecord.status === 0) {
       oldRecord.status = 1;
       oldRecord.creator = creatorString;
       await oldRecord.save();
     }
 
-    const friend = await friendModel.findFriend({ users });
-      return res.status(200).json({
-        success: true,
-        data: friend.toFriend(creatorString),
-      });
-  } catch(error) {
+    const friend = await friendModel.findFriendByUsers(userId, creatorString);
+
+    // Todo: 如果未來ws 拆出去要透過 exchange 溝通 services
+    req.exchange.transmitPublish(`friend.inviteFriend.${userId}`, friend.toFriend(userId));
+
+    return res.status(200).json({
+      success: true,
+      data: friend.toFriend(creatorString),
+    });
+  } catch (error) {
     return res.status(500).json({
       success: false,
       data: { message: error.message },
