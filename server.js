@@ -56,6 +56,7 @@ expressApp.use(express.json());
 expressApp.use(express.urlencoded({ extended: false }));
 expressApp.use(cookieParser());
 
+//TODO: 如果要把 ws 拆出去則需要透過 exange 來做溝通
 expressApp.use((req, _, next) => {
   req.exchange = agServer.exchange;
   next();
@@ -142,8 +143,15 @@ expressApp.post("/login", async (req, res) => {
       socket.disconnect(4101, "auth fail");
       return;
     }    
-
+    
     // Handle socket connection.
+    // setTimeout(() => {
+    //   setInterval(() => {
+    //     console.log('forawait -> socket.id', socket.id)
+    //     agServer.exchange.transmitPublish('foo', {"message": "yoyo"});  
+    //   }, 2000)
+      
+    // }, 10000)
     getMessagesListener(socket);
     getRoomsListener(socket);
 

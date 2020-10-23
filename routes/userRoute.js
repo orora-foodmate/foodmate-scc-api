@@ -1,25 +1,35 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const { userModel } = require('../models');
+const { userModel, friendModel } = require('../models');
 const router = express.Router();
 const tokenVerifyMiddleware = require('../helpers/tokenVerify');
 const { createNewUserStatus } = require('../onLineState/app');
+const isNull = require('lodash/isNull');
 
 router.get('/:id', tokenVerifyMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await userModel.findById(id, {password: false, hashPassword: false});
+    const [user, friend = null] = await Promise.all([
+      userModel.findById(id, { password: false, hashPassword: false }),
+      friendModel.findFriendByUsers(id, req.user._id.toString())
+    ]);
+
+    const [status, creator, friendId] = isNull(friend)
+    ? [0, null, null]
+    : [friend.status, friend.creator, friend.id];
+    console.log("friend", friend)
+
     return res.status(200).json({
       success: true,
-      data: user
+      data: { ...user.toJSON(), friendId, status, friendCreatorId: creator }
     });
-  } catch(error) {
+  } catch (error) {
     return res.status(200).json({
       success: true,
       data: null
     });
   }
-  
+
 });
 
 router.post('/', async (req, res, next) => {
