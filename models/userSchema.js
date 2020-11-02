@@ -32,6 +32,11 @@ const userSchema = new Schema({
     unique: true,
     required: true,
   },
+  regId: {
+    type: String,
+    unique: true,
+    default: '',
+  },
   createAt: {
     type: Date,
     default: now,

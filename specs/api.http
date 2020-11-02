@@ -17,8 +17,9 @@ POST {{domain}}login
 Content-Type: {{jsonContentType}}
 
 {
-  "account": "thomaslin0710@gmail.com",
-  "password": "a12345678"
+  "account": "thomaslin0719@gmail.com",
+  "password": "a12345678",
+  "regId": "abcd"
 }
 
 ### register user
