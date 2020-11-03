@@ -1,12 +1,9 @@
 const isEmpty = require('lodash/isEmpty');
-const { roomModel, friendModel } = require('../../models');
+const { friendModel } = require('../../models');
 
 const approveFriendTransaction = async (userId, friendId) => {
-  const session = await friendModel.startSession();
-  await session.startTransaction();
   try {
-    const friendRecord = await friendModel.findOne({ _id: friendId }).session(session);
-
+    const friendRecord = await friendModel.findFriendById(friendId);
     const creatorId = friendRecord.creator.toString();
     if(isEmpty(friendRecord)) {
       throw new Error('不存在');
@@ -22,25 +19,10 @@ const approveFriendTransaction = async (userId, friendId) => {
 
     friendRecord.status = 2;
     await friendRecord.save();
-    const room = await roomModel.create([{
-      name: 'room',
-      creator: friendRecord.creator,
-      users: friendRecord.users,
-      status: 1,
-      type: 0,
-    }], { session });
 
-    await session.commitTransaction();
-
-    return {
-      room,
-      friend: friendRecord,
-    };
+    return friendRecord;
   } catch (error) {
-    await session.abortTransaction();
     throw error;
-  } finally {
-    session.endSession();
   }
 }
 
