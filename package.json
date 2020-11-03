@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "contributors": [
     {
-      "name": "Jonathan Gros-Dubois",
-      "email": "grosjona@yahoo.com.au"
+      "name": "Tomas",
+      "email": "horsekit1982@gmail.com"
     }
   ],
   "dependencies": {
@@ -32,7 +32,14 @@
     "socketcluster-client": "^16.0.1",
     "socketcluster-server": "^16.0.0",
     "util": "^0.12.3",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "yup": "^0.29.3"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
   },
   "keywords": [
     "websocket",
@@ -43,8 +50,12 @@
   ],
   "readmeFilename": "README.md",
   "scripts": {
+    "test": "NODE_ENV=test jest",
     "start": "node server.js",
     "start:watch": "./node_modules/nodemon/bin/nodemon.js server.js",
     "start:docker": "./node_modules/nodemon/bin/nodemon.js /usr/src/app/server.js"
+  },
+  "devDependencies": {
+    "supertest": "^5.0.0"
   }
 }
