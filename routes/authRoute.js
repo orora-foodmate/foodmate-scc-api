@@ -10,11 +10,12 @@ const yup = require('yup');
 const loginSchema = yup.object().shape({
   account: yup.string().required("account 不可為空"),
   password: yup.string().required("password 不可為空"),
-  regId: yup.string().required("regid 不可為空"),
+  regId: yup.string().required("regId 不可為空"),
 });
 
 router.post('/login', async (req, res) => {
   try {
+    console.log('req.body', req.body)
     await loginSchema.validate(req.body);
     const { account, password, regId } = req.body;
     const user = await userModel.findOne({ account });
@@ -56,7 +57,9 @@ router.post('/login', async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ success: false, data: { message: error.message } })
+    console.log('error', error)
+    return res.status(500).json({ success: false, data: { message: error.message } })
   }
 });
+
 module.exports = router;
