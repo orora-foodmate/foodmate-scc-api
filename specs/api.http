@@ -85,4 +85,11 @@ GET {{domain}}rooms?updateAt=2020-10-12 17:24:28.83
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
+
+### create event
+
+POST {{domain}}events
+Content-Type: {{jsonContentType}}
+Authorization: Bearer {{token}}
+
 ###

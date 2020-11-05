@@ -68,6 +68,7 @@ const roomRoute = require('./routes/roomRoute');
 const authRoute = require('./routes/authRoute');
 const friendRoute = require("./routes/friendRoute");
 const messageRoute = require("./routes/messageRoute");
+const eventRoute = require('./routes/eventRoute');
 
 const { getMessagesListener } = require("./socketEvents/messageEvents");
 const { getRoomsListener } = require("./socketEvents/roomEvents");
@@ -78,7 +79,7 @@ expressApp.use("/users", userRoute);
 expressApp.use("/friends", tokenVerifyMiddleware, friendRoute);
 expressApp.use("/messages", tokenVerifyMiddleware, messageRoute);
 expressApp.use("/rooms", tokenVerifyMiddleware, roomRoute);
-
+expressApp.use("/events", tokenVerifyMiddleware, eventRoute);
 
 // Add GET /health-check express route
 expressApp.get("/health-check", tokenVerifyMiddleware, (req, res) => {
