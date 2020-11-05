@@ -61,6 +61,7 @@ expressApp.use((req, _, next) => {
   next();
 });
 
+require('./firebaseNotic/app');
 const tokenVerifyMiddleware = require('./helpers/tokenVerify');
 const userRoute = require("./routes/userRoute");
 const roomRoute = require('./routes/roomRoute');

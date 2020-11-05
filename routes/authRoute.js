@@ -4,6 +4,7 @@ const pick = require('lodash/pick');
 const { saltHashPassword } = require("../helpers/utils");
 const { userModel } = require('../models');
 const { agServer } = require("../helpers/agServerCreator");
+const tokenVerifyMiddleware = require('../helpers/tokenVerify');
 const router = express.Router();
 const yup = require('yup');
 
@@ -15,7 +16,6 @@ const loginSchema = yup.object().shape({
 
 router.post('/login', async (req, res) => {
   try {
-    console.log('req.body', req.body)
     await loginSchema.validate(req.body);
     const { account, password, regId } = req.body;
     const user = await userModel.findOne({ account });
@@ -57,7 +57,20 @@ router.post('/login', async (req, res) => {
       },
     });
   } catch (error) {
-    console.log('error', error)
+    return res.status(500).json({ success: false, data: { message: error.message } })
+  }
+});
+
+router.post('/logout', tokenVerifyMiddleware, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const user = await userModel.findById(userId);
+    
+    user.regId = '';
+    await user.save();
+
+    res.status(200).json({ success: true });
+  } catch (error) {
     return res.status(500).json({ success: false, data: { message: error.message } })
   }
 });

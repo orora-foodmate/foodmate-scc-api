@@ -12,6 +12,11 @@ GET {{domain}}health-check
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
+### Logout 
+POST {{domain}}logout
+Authorization: Bearer {{token}}
+Content-Type: {{jsonContentType}}
+
 ### Login username:password
 POST {{domain}}login
 Content-Type: {{jsonContentType}}
