@@ -135,4 +135,14 @@ POST {{domain}}events/5fa4fb65de118b078235af7c/validate/5f86c23259b73f5e40c2fed4
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
+### add comment with event
+
+
+POST {{domain}}events/5fa4fb65de118b078235af7c/comment
+Content-Type: {{jsonContentType}}
+Authorization: Bearer {{token}}
+
+{
+  "content": "test content"
+}
 ###

@@ -157,14 +157,14 @@ eventSchema.pre('save', function (next) {
 });
 
 eventSchema.statics.findEvent = function findEvent(query, options) {
-  return this.findOne(query, options, ,  '-tags -comments')
+  return this.findOne(query, options, '-tags -comments')
     .populate({ path: "users.info", select: userSelectFields })
     .populate({ path: "creator", select: userSelectFields })
     .exec();
 };
 
 eventSchema.statics.findEventById = function findEventById(eventId) {
-  return this.findById(eventId,  '-tags -comments')
+  return this.findById(eventId, '-tags -comments')
     .populate({ path: "users.info", select: userSelectFields })
     .populate({ path: "creator", select: userSelectFields })
     .exec();
@@ -175,7 +175,7 @@ eventSchema.statics.findEvents = function findEvents(
   query = {},
   options = {}
 ) {
-  return this.find(query,  options, '-tags -comments')
+  return this.find(query, options, '-tags -comments')
     .populate({ path: "users.info", select: userSelectFields })
     .populate({ path: "creator", select: userSelectFields })
     .exec();

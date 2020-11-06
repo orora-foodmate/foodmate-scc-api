@@ -2,9 +2,10 @@ const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
 const yup = require('yup');
-const { eventModel, eventUserModel } = require('../models');
+const { eventModel, eventUserModel, commentModel } = require('../models');
 const { getConditionByQuery } = require('../helpers/utils');
 const isEmpty = require('lodash/isEmpty');
+const { now } = require('../helpers/dateHelper');
 
 router.get('/', async (req, res) => {
   try {
@@ -38,16 +39,16 @@ router.post('/leave/:eventId', async (req, res) => {
     const { eventId } = req.params;
 
     const event = await eventModel.findEventById(eventId);
-    if(isEmpty(event)) {
+    if (isEmpty(event)) {
       throw new Error('活動不存在');
     }
-    
+
     const alreadyJoin = validateAlreadyJoin(event, user);
     if (!alreadyJoin) {
       throw new Error('尚未加入活動');
     }
 
-    await eventModel.update({ _id: eventId }, { $pull: { users: {info: user._id} } });
+    await eventModel.update({ _id: eventId }, { $pull: { users: { info: user._id } } });
     const updatedEvent = await eventModel.findEventById(eventId);
 
     return res.status(200).json({
@@ -67,18 +68,18 @@ router.post('/:eventId/validate/:userId', async (req, res) => {
   try {
     const { user } = req;
     const { eventId, userId } = req.params;
-    
+
     const event = await eventModel.findEventById(eventId);
-    if(isEmpty(event)) {
+    if (isEmpty(event)) {
       throw new Error('活動不存在');
     }
-    
-    if(event.creator.id.toString() !== user._id.toString()) {
+
+    if (event.creator.id.toString() !== user._id.toString()) {
       throw new Error('只有主揪可以審核');
     }
 
-    const needValidateUserIndex = event.users.findIndex(u => u.info.id.toString()  === userId);
-    if(needValidateUserIndex === -1) {
+    const needValidateUserIndex = event.users.findIndex(u => u.info.id.toString() === userId);
+    if (needValidateUserIndex === -1) {
       throw new Error('會員未參加此活動');
     }
 
@@ -104,7 +105,7 @@ router.post('/:eventId', async (req, res) => {
     const { eventId } = req.params;
 
     const event = await eventModel.findEventById(eventId);
-    if(isEmpty(event)) {
+    if (isEmpty(event)) {
       throw new Error('活動不存在');
     }
 
@@ -161,8 +162,8 @@ router.post('/', async (req, res) => {
       ...body,
       _id: eventId,
       users: [
-        ...users.map(userId => ({info: userId, status: 0})),
-        {info: user._id, status: 1},
+        ...users.map(userId => ({ info: userId, status: 0 })),
+        { info: user._id, status: 1 },
       ],
       creator: user._id
     }).save();
@@ -172,6 +173,57 @@ router.post('/', async (req, res) => {
     return res.status(200).json({
       success: true,
       data: result,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: true,
+      data: { message: error.message },
+    });
+  }
+});
+
+
+const createCommentSchema = yup.object().shape({
+  content: yup.string().required('content 不可為空'),
+});
+
+router.post('/:eventId/comment', async (req, res) => {
+  try {
+    const { user, body } = req;
+    await createCommentSchema.validate(body);
+    if(isEmpty(body.content)) {
+      throw new Error("content 不可為空");
+    }
+
+    const { eventId } = req.params;
+
+    const event = await eventModel.findEventById(eventId);
+    if (isEmpty(event)) {
+      throw new Error('活動不存在');
+    }
+
+    const newComment = new commentModel({
+      status: 0,
+      createAt: now(),
+      updateAt: now(),
+      content: body.content,
+      sender: user._id,
+    });
+
+    await eventModel.update({ _id: eventId }, { $push: { comments: newComment } });
+    return res.status(200).json({
+      success: true,
+      data: {
+        comment: {
+          ...newComment.toJSON(),
+          sender: {
+            id: user._id,
+            account: user.account,
+            avatar: user.avatar,
+            name: user.name,
+          }
+        }
+      },
     });
   } catch (error) {
     return res.status(500).json({
