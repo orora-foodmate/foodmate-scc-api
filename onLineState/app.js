@@ -47,7 +47,6 @@ const createNewUserListener = async (socket) => {
 
       request.end(user)
     } catch (error) {
-      console.log('forawait -> error', error)
       request.error(error)
     }
   }

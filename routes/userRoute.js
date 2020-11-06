@@ -17,7 +17,6 @@ router.get('/:id', tokenVerifyMiddleware, async (req, res) => {
     const [status, creator, friendId] = isNull(friend)
     ? [0, null, null]
     : [friend.status, friend.creator, friend.id];
-    console.log("friend", friend)
 
     return res.status(200).json({
       success: true,
@@ -32,7 +31,7 @@ router.get('/:id', tokenVerifyMiddleware, async (req, res) => {
 
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/', async (req, res) => {
   try {
     const { name, password, account } = req.body;
     const id = mongoose.Types.ObjectId();

@@ -33,12 +33,7 @@ stan.on("connect", function () {
     const subscription = stan.subscribe("foo", "foo.workers", opts);
     
     subscription.on("message", function (msg) {
-      console.log(
-        "Received a message [" + msg.getSequence() + "] " + msg.getData()
-      );
-
       indexItem.sequence = indexItem.sequence + 1;
-      console.log("indexItem", indexItem)
       indexItem.save();
       msg.ack();
     });

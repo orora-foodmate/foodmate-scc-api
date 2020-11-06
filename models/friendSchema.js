@@ -5,6 +5,7 @@ const { now, formatDateTime } = require("../helpers/dateHelper");
 const { Schema } = mongoose;
 
 const userSelectFields = 'account name avatar room';
+
 const friendSchema = new Schema(
   {
     users: [

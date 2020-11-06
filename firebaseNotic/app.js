@@ -43,7 +43,6 @@ stan.on('connect', function () {
         await messagingInstance.send(item);
         indexItem.sequence = msg.getSequence();
         indexItem.save();
-        console.log('indexItem', indexItem)
         msg.ack();
       } catch (error) {
         console.log('error', error)

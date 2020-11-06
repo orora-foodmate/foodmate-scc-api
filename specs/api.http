@@ -92,4 +92,23 @@ POST {{domain}}events
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
+{
+  "title": "event title",
+  "logo": "https://dyl80ryjxr1ke.cloudfront.net/external_assets/hero_examples/hair_beach_v1785392215/original.jpeg",
+  "publicationPlace": "台北",
+  "description": "description aaa",
+  "meetingGeoJson": {
+    "type": "Point",
+    "coordinates": [
+      121.35355353355406,
+      25.046982934609268
+    ]
+  },
+  "type": 0,
+  "status": 0,
+  "paymentMethod": 0,
+  "budget": 100,
+  "finalReviewAt" : "2020-11-06 11:23:22",
+  "datingAt" : "2020-11-09 11:23:22"
+}
 ###
