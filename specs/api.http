@@ -130,7 +130,6 @@ Authorization: Bearer {{token}}
 
 ###
 
-
 ### validate event user
 POST {{domain}}events/5fa4fb65de118b078235af7c/validate/5f86c23259b73f5e40c2fed4
 Content-Type: {{jsonContentType}}
