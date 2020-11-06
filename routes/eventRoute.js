@@ -187,11 +187,11 @@ const createCommentSchema = yup.object().shape({
   content: yup.string().required('content 不可為空'),
 });
 
-router.post('/:eventId/comment', async (req, res) => {
+router.post('/:eventId/comments', async (req, res) => {
   try {
     const { user, body } = req;
     await createCommentSchema.validate(body);
-    if(isEmpty(body.content)) {
+    if (isEmpty(body.content)) {
       throw new Error("content 不可為空");
     }
 
@@ -232,5 +232,31 @@ router.post('/:eventId/comment', async (req, res) => {
     });
   }
 });
+
+
+router.get('/:eventId/comments', async (req, res) => {
+  try {
+    const { user } = req;
+    const { eventId } = req.params;
+
+    const event = await eventModel.findComments(eventId, req.query);
+    if (isEmpty(event)) {
+      throw new Error('活動不存在');
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        comments: event
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: true,
+      data: { message: error.message },
+    });
+  }
+});
+
 
 module.exports = router;

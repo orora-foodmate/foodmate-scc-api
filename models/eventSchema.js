@@ -3,7 +3,10 @@ const isArray = require('lodash/isArray');
 const { schemaOptions } = require("../constants/mongooseOptions");
 const { Schema } = mongoose;
 const { now, formatDateTime } = require("../helpers/dateHelper");
-
+const isEmpty = require('lodash/isEmpty');
+const isAfter = require('date-fns/isAfter');
+const parseISO = require('date-fns/parseISO');
+parseISO
 const userSelectFields = 'account name avatar room';
 
 const eventUserSchema = new Schema({
@@ -179,6 +182,15 @@ eventSchema.statics.findEvents = function findEvents(
     .populate({ path: "users.info", select: userSelectFields })
     .populate({ path: "creator", select: userSelectFields })
     .exec();
+};
+
+eventSchema.statics.findComments = async function findComments(eventId, {updateAt}) {
+  const {comments} = await this.findById(eventId, 'comments').exec();
+  if(isEmpty(updateAt)) {
+    return comments;
+  }
+  
+  return comments.filter(comment => isAfter(parseISO(comment.updateAt), parseISO(updateAt)));
 };
 
 module.exports = {

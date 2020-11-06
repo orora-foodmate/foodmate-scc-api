@@ -4,9 +4,11 @@ const { zonedTimeToUtc } = require('./dateHelper');
 
 const { SALT_SECRET } = process.env;
 
-const getConditionByQuery = (query) => {
+const getConditionByQuery = (query, options = {}) => {
+  const {createAtKey = "createAt", updateAtKey = "updateAt"} = options;
   let createAtConn = {};
   let updateAtConn = {};
+
   const { createAt = null, updateAt = null, or = null } = query;
   const hasOR = Boolean(or) && !isNull(createAt) && !isNull(updateAt);
 
@@ -14,15 +16,17 @@ const getConditionByQuery = (query) => {
     return {}
   }
 
+  console.log('getConditionByQuery -> createAt', createAt)
   if (!isNull(createAt)) {
     const createAtStr = decodeURI(createAt);
     const createAtUTC = zonedTimeToUtc(createAtStr);
-    createAtConn = { createAt: { $gt: createAtUTC } };
+    createAtConn = { [createAtKey]: { $gt: createAtUTC } };
   }
+  console.log('getConditionByQuery -> updateAt', updateAt)
   if (!isNull(updateAt)) {
     const updateAtStr = decodeURI(updateAt);
     const updateAtUTC = zonedTimeToUtc(updateAtStr);
-    updateAtConn = { updateAt: { $gt: updateAtUTC } };
+    updateAtConn = { [updateAtKey]: { $gt: updateAtUTC } };
   }
   return hasOR
     ? { $or: [createAtConn, updateAtConn] }

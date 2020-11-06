@@ -135,14 +135,19 @@ POST {{domain}}events/5fa4fb65de118b078235af7c/validate/5f86c23259b73f5e40c2fed4
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
+### get comments with event
+GET {{domain}}events/5fa4fb65de118b078235af7c/comments?updateAt=2020-11-06 18:26:34
+Content-Type: {{jsonContentType}}
+Authorization: Bearer {{token}}
+# 2020-11-06 16:59:46
 ### add comment with event
 
-
-POST {{domain}}events/5fa4fb65de118b078235af7c/comment
+POST {{domain}}events/5fa4fb65de118b078235af7c/comments
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
 {
-  "content": "test content"
+  "content": "test content2"
 }
+
 ###
