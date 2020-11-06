@@ -6,6 +6,18 @@ const { now, formatDateTime } = require("../helpers/dateHelper");
 
 const userSelectFields = 'account name avatar room';
 
+const eventUserSchema = new Schema({
+  info: {
+    type: Schema.Types.ObjectId,
+    ref: 'users',
+  },
+  status: {
+    type: Number,
+    default: 0,
+    enum: [0, 1], //[0: 等待審核中, 1: 已經通過審核]
+  }
+}, schemaOptions);
+
 const tagSchema = new Schema({
   title: {
     type: String,
@@ -15,7 +27,7 @@ const tagSchema = new Schema({
     type: String,
     required: true,
   },
-});
+}, schemaOptions);
 
 const commentSchema = new Schema({
   status: {
@@ -42,7 +54,7 @@ const commentSchema = new Schema({
     default: now,
     get: formatDateTime,
   },
-});
+}, schemaOptions);
 
 const eventSchema = new Schema(
   {
@@ -67,10 +79,7 @@ const eventSchema = new Schema(
       ref: 'users',
       required: true,
     },
-    users: [{
-      type: Schema.Types.ObjectId,
-      ref: 'users',
-    }],
+    users: [eventUserSchema],
     meetingGeoJson: {
       type: {
         type: String,
@@ -142,22 +151,20 @@ const eventSchema = new Schema(
 eventSchema.pre('save', function (next) {
   if (!isArray(this.comments)) this.comments = [];
   if (!isArray(this.tags)) this.tags = [];
-  this.users = isArray(this.users)
-    ? [...this.users, this.creator]
-    : [this.creator];
+  if (!isArray(this.users)) this.users = [];
   next();
 });
 
 eventSchema.statics.findEvent = function findEvent(query, options) {
   return this.findOne(query, options)
-    .populate({ path: "users", select: userSelectFields })
+    .populate({ path: "users.info", select: userSelectFields })
     .populate({ path: "creator", select: userSelectFields })
     .exec();
 };
 
 eventSchema.statics.findEventById = function findEventById(eventId) {
   return this.findById(eventId)
-    .populate({ path: "users", select: userSelectFields })
+    .populate({ path: "users.info", select: userSelectFields })
     .populate({ path: "creator", select: userSelectFields })
     .exec();
 };
@@ -168,9 +175,14 @@ eventSchema.statics.findEvents = function findEvents(
   options = {}
 ) {
   return this.find(query, options)
-    .populate({ path: "users", select: userSelectFields })
+    .populate({ path: "users.info", select: userSelectFields })
     .populate({ path: "creator", select: userSelectFields })
     .exec();
 };
 
-module.exports = eventSchema;
+module.exports = {
+  eventSchema,
+  eventUserSchema,
+  tagSchema,
+  commentSchema,
+};

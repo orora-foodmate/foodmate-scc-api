@@ -2,7 +2,7 @@
 
 @domain = {{DEV}}
 @jsonContentType = application/json
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Zjg2YzI2NWRlM2Q5NDVlNjBjYTA0NzkiLCJhY2NvdW50IjoidGhvbWFzbGluMDcxOUBnbWFpbC5jb20iLCJhdmF0YXIiOiJodHRwOi8vY2xpcGFydC1saWJyYXJ5LmNvbS9pbWFnZXMvNmNwb3k3OHJpLnBuZyIsIm5hbWUiOiJ0b21hczExIiwiaWF0IjoxNjA0NjM5NzcwfQ.Y1OplBIPTyW5jg7RHcLggvHUuCoKeKIWUakjSm1ZFh8
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjczMDM4YWEzODU4ZmIxOTUzM2YxMTMiLCJhY2NvdW50IjoiaG9yc2VraXQxOTgyQGdtYWlsLmNvbSIsImF2YXRhciI6Imh0dHA6Ly9jbGlwYXJ0LWxpYnJhcnkuY29tL2ltYWdlcy82Y3BveTc4cmkucG5nIiwibmFtZSI6InRvbWFzMSIsImlhdCI6MTYwNDY0ODQyMn0.WsL0vhuclC4JNpbf1mzX_qW5V_DKAqRaf87-ULWel8s
 @userId = 5f86b4e39877615b95f5ced1
 @friendId = 5f73038aa3858fb19533f113
 @roomId = 5f8420cccd899f2a59f24fe6
@@ -22,7 +22,7 @@ POST {{domain}}login
 Content-Type: {{jsonContentType}}
 
 {
-  "account": "thomaslin0719@gmail.com",
+  "account": "horsekit1982@gmail.com",
   "password": "a12345678",
   "regId": "abcd"
 }
@@ -118,12 +118,12 @@ Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
 ### join event
-POST {{domain}}events/5fa4c2691d6e947d3872065f
+POST {{domain}}events/5fa4fb65de118b078235af7c
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
 ### leave event
-POST {{domain}}events/leave/5fa4c2691d6e947d3872065f
+POST {{domain}}events/leave/5fa4fb65de118b078235af7c
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 

@@ -2,8 +2,9 @@ const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
 const yup = require('yup');
-const { eventModel } = require('../models');
+const { eventModel, eventUserModel } = require('../models');
 const { getConditionByQuery } = require('../helpers/utils');
+const isEmpty = require('lodash/isEmpty');
 
 router.get('/', async (req, res) => {
   try {
@@ -11,7 +12,7 @@ router.get('/', async (req, res) => {
     const condition = getConditionByQuery(req.query);
 
     const events = await eventModel.findEvents({
-      users: { $in: [user._id] },
+      "users.info": { $in: [user._id] },
       ...condition,
     })
     return res.status(200).json({
@@ -27,7 +28,7 @@ router.get('/', async (req, res) => {
 });
 
 const validateAlreadyJoin = (event, user) => {
-  const result = event.users.find(u => u.id.toString() === user._id.toString());
+  const result = event.users.find(u => u.info.id.toString() === user._id.toString());
   return Boolean(result);
 };
 
@@ -37,12 +38,16 @@ router.post('/leave/:eventId', async (req, res) => {
     const { eventId } = req.params;
 
     const event = await eventModel.findEventById(eventId);
+    if(isEmpty(event)) {
+      throw new Error('活動不存在');
+    }
+    
     const alreadyJoin = validateAlreadyJoin(event, user);
     if (!alreadyJoin) {
       throw new Error('尚未加入活動');
     }
 
-    await eventModel.update({ _id: eventId }, { $pull: { users: user._id } });
+    await eventModel.update({ _id: eventId }, { $pull: { users: {info: user._id} } });
     const updatedEvent = await eventModel.findEventById(eventId);
 
     return res.status(200).json({
@@ -63,12 +68,20 @@ router.post('/:eventId', async (req, res) => {
     const { eventId } = req.params;
 
     const event = await eventModel.findEventById(eventId);
+    if(isEmpty(event)) {
+      throw new Error('活動不存在');
+    }
+
     const alreadyJoin = validateAlreadyJoin(event, user);
     if (alreadyJoin) {
       throw new Error('已經加入活動');
     }
 
-    await eventModel.update({ _id: eventId }, { $push: { users: user._id } });
+    const eventUser = new eventUserModel({
+      info: user._id,
+      status: 0,
+    });
+    await eventModel.update({ _id: eventId }, { $push: { users: eventUser } });
     const updatedEvent = await eventModel.findEventById(eventId);
 
     return res.status(200).json({
@@ -86,6 +99,7 @@ router.post('/:eventId', async (req, res) => {
 const createEventSchema = yup.object().shape({
   title: yup.string().required('title 不可為空'),
   logo: yup.string().required("logo 不可為空"),
+  users: yup.array(),
   publicationPlace: yup.string().required("publicationPlace 不可為空"),
   description: yup.string().required("description 不可為空"),
   meetingGeoJson: yup.object({
@@ -103,12 +117,17 @@ const createEventSchema = yup.object().shape({
 router.post('/', async (req, res) => {
   try {
     const { user, body } = req;
+    const { users = [] } = body;
     await createEventSchema.validate(body);
     const eventId = mongoose.Types.ObjectId();
 
     await new eventModel({
       ...body,
       _id: eventId,
+      users: [
+        ...users.map(userId => ({info: userId, status: 0})),
+        {info: user._id, status: 1},
+      ],
       creator: user._id
     }).save();
 

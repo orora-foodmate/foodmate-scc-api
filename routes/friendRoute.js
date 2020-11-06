@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
     const condition = getConditionByQuery(req.query);
     const friends = await friendModel.findFriends({
       status: { $ne: 0 },
-      users: { $in: [user._id] },
+      // users: { $in: [user._id] },
       ...condition,
     });
 
