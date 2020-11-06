@@ -121,4 +121,10 @@ Authorization: Bearer {{token}}
 POST {{domain}}events/5fa4c2691d6e947d3872065f
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
+
+### leave event
+POST {{domain}}events/leave/5fa4c2691d6e947d3872065f
+Content-Type: {{jsonContentType}}
+Authorization: Bearer {{token}}
+
 ###

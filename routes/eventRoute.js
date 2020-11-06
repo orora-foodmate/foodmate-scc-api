@@ -31,6 +31,32 @@ const validateAlreadyJoin = (event, user) => {
   return Boolean(result);
 };
 
+router.post('/leave/:eventId', async (req, res) => {
+  try {
+    const { user } = req;
+    const { eventId } = req.params;
+
+    const event = await eventModel.findEventById(eventId);
+    const alreadyJoin = validateAlreadyJoin(event, user);
+    if (!alreadyJoin) {
+      throw new Error('尚未加入活動');
+    }
+
+    await eventModel.update({ _id: eventId }, { $pull: { users: user._id } });
+    const updatedEvent = await eventModel.findEventById(eventId);
+
+    return res.status(200).json({
+      success: true,
+      data: { event: updatedEvent },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: true,
+      data: { message: error.message },
+    });
+  }
+});
+
 router.post('/:eventId', async (req, res) => {
   try {
     const { user } = req;
