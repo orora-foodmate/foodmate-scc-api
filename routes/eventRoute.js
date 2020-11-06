@@ -26,6 +26,37 @@ router.get('/', async (req, res) => {
   }
 });
 
+const validateAlreadyJoin = (event, user) => {
+  const result = event.users.find(u => u.id.toString() === user._id.toString());
+  return Boolean(result);
+};
+
+router.post('/:eventId', async (req, res) => {
+  try {
+    const { user } = req;
+    const { eventId } = req.params;
+
+    const event = await eventModel.findEventById(eventId);
+    const alreadyJoin = validateAlreadyJoin(event, user);
+    if (alreadyJoin) {
+      throw new Error('已經加入活動');
+    }
+
+    await eventModel.update({ _id: eventId }, { $push: { users: user._id } });
+    const updatedEvent = await eventModel.findEventById(eventId);
+
+    return res.status(200).json({
+      success: true,
+      data: { event: updatedEvent },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: true,
+      data: { message: error.message },
+    });
+  }
+});
+
 const createEventSchema = yup.object().shape({
   title: yup.string().required('title 不可為空'),
   logo: yup.string().required("logo 不可為空"),

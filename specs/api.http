@@ -113,8 +113,12 @@ Authorization: Bearer {{token}}
 }
 
 ### get events
-GET {{domain}}events?updateAt=2020-11-06 13:16:52
+GET {{domain}}events?updateAt=2020-11-06 11:26:34
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
+### join event
+POST {{domain}}events/5fa4c2691d6e947d3872065f
+Content-Type: {{jsonContentType}}
+Authorization: Bearer {{token}}
 ###
