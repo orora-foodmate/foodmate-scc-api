@@ -155,4 +155,15 @@ eventSchema.statics.findEventById = function findFriendById(eventId) {
     .exec();
 };
 
+
+eventSchema.statics.findEvents = function findEvents(
+  query = {},
+  options = {}
+) {
+  return this.find(query, options)
+    .populate({ path: "users", select: userSelectFields })
+    .populate({ path: "creator", select: userSelectFields })
+    .exec();
+};
+
 module.exports = eventSchema;

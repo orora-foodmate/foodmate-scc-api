@@ -3,6 +3,28 @@ const express = require('express');
 const router = express.Router();
 const yup = require('yup');
 const { eventModel } = require('../models');
+const { getConditionByQuery } = require('../helpers/utils');
+
+router.get('/', async (req, res) => {
+  try {
+    const { user } = req;
+    const condition = getConditionByQuery(req.query);
+
+    const events = await eventModel.findEvents({
+      users: { $in: [user._id] },
+      ...condition,
+    })
+    return res.status(200).json({
+      success: true,
+      data: { events },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: true,
+      data: { message: error.message },
+    });
+  }
+});
 
 const createEventSchema = yup.object().shape({
   title: yup.string().required('title 不可為空'),
