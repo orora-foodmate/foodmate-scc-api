@@ -62,6 +62,42 @@ router.post('/leave/:eventId', async (req, res) => {
   }
 });
 
+
+router.post('/:eventId/validate/:userId', async (req, res) => {
+  try {
+    const { user } = req;
+    const { eventId, userId } = req.params;
+    
+    const event = await eventModel.findEventById(eventId);
+    if(isEmpty(event)) {
+      throw new Error('活動不存在');
+    }
+    
+    if(event.creator.id.toString() !== user._id.toString()) {
+      throw new Error('只有主揪可以審核');
+    }
+
+    const needValidateUserIndex = event.users.findIndex(u => u.info.id.toString()  === userId);
+    if(needValidateUserIndex === -1) {
+      throw new Error('會員未參加此活動');
+    }
+
+    event.users[needValidateUserIndex].status = 1;
+    await event.save();
+    const updatedEvent = await eventModel.findEventById(eventId);
+
+    return res.status(200).json({
+      success: true,
+      data: { event: updatedEvent },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: true,
+      data: { message: error.message },
+    });
+  }
+});
+
 router.post('/:eventId', async (req, res) => {
   try {
     const { user } = req;

@@ -152,6 +152,7 @@ eventSchema.pre('save', function (next) {
   if (!isArray(this.comments)) this.comments = [];
   if (!isArray(this.tags)) this.tags = [];
   if (!isArray(this.users)) this.users = [];
+  this.updateAt = now();
   next();
 });
 
