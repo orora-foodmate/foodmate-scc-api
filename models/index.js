@@ -21,9 +21,17 @@ const userSchema = require('./userSchema');
 const friendSchema = require('./friendSchema');
 const roomSchema = require('./roomSchema');
 const messageSchema = require('./messageSchema');
+const {
+  eventSchema,
+  commentSchema,
+  eventUserSchema,
+} = require('./eventSchema');
 
 module.exports.connection = mongoose.connection;
 module.exports.userModel = mongoose.model('users', userSchema);
 module.exports.friendModel = mongoose.model('friends', friendSchema);
 module.exports.roomModel = mongoose.model('rooms', roomSchema);
 module.exports.messageModel = mongoose.model('messages', messageSchema);
+module.exports.eventModel = mongoose.model('events', eventSchema);
+module.exports.eventUserModel = mongoose.model('eventUsers', eventUserSchema);
+module.exports.commentModel = mongoose.model('comments', commentSchema);

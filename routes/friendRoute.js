@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
     const condition = getConditionByQuery(req.query);
     const friends = await friendModel.findFriends({
       status: { $ne: 0 },
-      users: { $in: [user._id] },
+      // users: { $in: [user._id] },
       ...condition,
     });
 
@@ -122,7 +122,6 @@ router.post("/invite/:userId", async (req, res) => {
       data: friend.toFriend(creatorString),
     });
   } catch (error) {
-    console.log('error', error)
     return res.status(500).json({
       success: false,
       data: { message: error.message },
