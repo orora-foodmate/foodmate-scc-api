@@ -1,11 +1,13 @@
 "use-strict";
-const servers = [
-  "nats://127.0.0.1:14222",
-  "nats://127.0.0.1:24222",
-  "nats://127.0.0.1:34222",
-];
+// const servers = [
+//   "nats://127.0.0.1:14222",
+//   "nats://127.0.0.1:24222",
+//   "nats://127.0.0.1:34222",
+// ];
 const isEmpty = require("lodash/isEmpty");
 const { TaskIndexes } = require("./onLineState/models");
+
+const servers = process.env.NATS_SERVER_HOSTS.split(',');
 const stan = require("node-nats-streaming").connect("nats-streaming", "test", {
   servers,
 });
@@ -31,12 +33,7 @@ stan.on("connect", function () {
     const subscription = stan.subscribe("foo", "foo.workers", opts);
     
     subscription.on("message", function (msg) {
-      console.log(
-        "Received a message [" + msg.getSequence() + "] " + msg.getData()
-      );
-
       indexItem.sequence = indexItem.sequence + 1;
-      console.log("indexItem", indexItem)
       indexItem.save();
       msg.ack();
     });

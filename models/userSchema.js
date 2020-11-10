@@ -32,6 +32,22 @@ const userSchema = new Schema({
     unique: true,
     required: true,
   },
+  phone: {
+    type: String,
+    unique: true,
+    default: null,
+  },
+  regId: {
+    type: String,
+    unique: true,
+    default: '',
+  },
+  gender: {
+    type: Number,
+    unique: true,
+    default: null,
+    enum: [null, 'M', 'F']
+  },
   createAt: {
     type: Date,
     default: now,

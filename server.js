@@ -7,7 +7,6 @@ const uuid = require("uuid");
 const sccBrokerClient = require("scc-broker-client");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const pick = require("lodash/pick");
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -62,71 +61,29 @@ expressApp.use((req, _, next) => {
   next();
 });
 
+require('./firebaseNotic/app');
 const tokenVerifyMiddleware = require('./helpers/tokenVerify');
 const userRoute = require("./routes/userRoute");
 const roomRoute = require('./routes/roomRoute');
+const authRoute = require('./routes/authRoute');
 const friendRoute = require("./routes/friendRoute");
 const messageRoute = require("./routes/messageRoute");
+const eventRoute = require('./routes/eventRoute');
 
-const { userModel } = require("./models");
-const { saltHashPassword } = require("./helpers/utils");
 const { getMessagesListener } = require("./socketEvents/messageEvents");
 const { getRoomsListener } = require("./socketEvents/roomEvents");
 const { activeUserStatus, unActiveUserStatus } = require('./onLineState/app');
 
+expressApp.use("/", authRoute);
 expressApp.use("/users", userRoute);
 expressApp.use("/friends", tokenVerifyMiddleware, friendRoute);
 expressApp.use("/messages", tokenVerifyMiddleware, messageRoute);
 expressApp.use("/rooms", tokenVerifyMiddleware, roomRoute);
-
+expressApp.use("/events", tokenVerifyMiddleware, eventRoute);
 
 // Add GET /health-check express route
 expressApp.get("/health-check", tokenVerifyMiddleware, (req, res) => {
   res.status(200).json({ success: true });
-});
-
-expressApp.post("/login", async (req, res) => {
-  try {
-    const { account, password } = req.body;
-    const user = await userModel.findOne({ account });
-
-    if (isEmpty(user)) {
-      return res.status(400).json({
-        success: false,
-        data: {
-          message: '使用者不存在'
-        }
-      })
-    }
-
-    const hashPassword = saltHashPassword(password, process.env.SALT_SECRET);
-
-    if (user.hashPassword !== hashPassword) {
-      return res.status(401).json({
-        success: false,
-        data: {
-          message: "authorization fail",
-        },
-      });
-    }
-
-    const myTokenData = pick(user, ["_id", "account", "avatar", "name"]);
-    const signedTokenString = await agServer.auth.signToken(
-      myTokenData,
-      agServer.signatureKey
-    );
-
-    res.status(200).json({
-      success: true,
-      data: {
-        ...myTokenData,
-        token: signedTokenString,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, data: { message: error.message } })
-  }
-
 });
 
 // HTTP request handling loop.

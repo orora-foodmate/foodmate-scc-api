@@ -1,30 +1,21 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const isNull = require('lodash/isNull');
+const { userModel } = require('../models');
 const pick = require("lodash/pick");
 const router = express.Router();
 const tokenVerifyMiddleware = require('../helpers/tokenVerify');
-const { userModel, friendModel } = require('../models');
 const { agServer } = require("../helpers/agServerCreator");
 const { createNewUserStatus } = require('../onLineState/app');
-
+const { getUserByUserIds } = require('../helpers/mongooseHelper');
 
 router.get('/:id', tokenVerifyMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
-    const [user, friend = null] = await Promise.all([
-      userModel.findById(id, { password: false, hashPassword: false }),
-      friendModel.findFriendByUsers(id, req.user._id.toString())
-    ]);
-
-    const [status, creator, friendId] = isNull(friend)
-    ? [0, null, null]
-    : [friend.status, friend.creator, friend.id];
-    console.log("friend", friend)
+    const user = await getUserByUserIds(req.user._id.toString(), id);
 
     return res.status(200).json({
       success: true,
-      data: { ...user.toJSON(), friendId, status, friendCreatorId: creator }
+      data: { ...user, creator: undefined },
     });
   } catch (error) {
     return res.status(200).json({
@@ -35,7 +26,7 @@ router.get('/:id', tokenVerifyMiddleware, async (req, res) => {
 
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/', async (req, res) => {
   try {
     const { name, password, account } = req.body;
     const id = mongoose.Types.ObjectId();
