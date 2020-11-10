@@ -1,8 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const { userModel } = require('../models');
+const pick = require("lodash/pick");
 const router = express.Router();
 const tokenVerifyMiddleware = require('../helpers/tokenVerify');
+const { agServer } = require("../helpers/agServerCreator");
 const { createNewUserStatus } = require('../onLineState/app');
 const { getUserByUserIds } = require('../helpers/mongooseHelper');
 
@@ -39,6 +41,29 @@ router.post('/', async (req, res) => {
     // 之後要拆出 micro service 控制 online status 時使用
     // await req.exchange.invokePublish('createNewUserStatus', { userId: id });
 
+    const myTokenData = pick(user, ["_id", "account", "avatar", "name"]);
+    const signedTokenString = await agServer.auth.signToken(
+      myTokenData,
+      agServer.signatureKey
+    );
+    return res.status(200).json({
+      success: true,
+      data: {
+        ...myTokenData,
+        token: signedTokenString,
+      }
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, data: { message: error.message } });
+  }
+});
+
+router.patch('/', tokenVerifyMiddleware, async (req, res, next) => {
+  try {
+    const { name, id } = req.body;
+    const user = userModel.findById(id, { password: false, hashPassword: false })
+    await user.update({ _id: id, name });
+
     return res.status(200).json({
       success: true,
       data: {
@@ -47,9 +72,9 @@ router.post('/', async (req, res) => {
         account: user.account
       }
     });
-  } catch (error) {
+  }catch(error) {
     return res.status(500).json({ success: false, data: { message: error.message } });
   }
-});
+})
 
 module.exports = router;
