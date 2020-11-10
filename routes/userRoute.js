@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const isNull = require('lodash/isNull');
+const pick = require("lodash/pick");
 const router = express.Router();
 const tokenVerifyMiddleware = require('../helpers/tokenVerify');
 const { userModel, friendModel } = require('../models');
