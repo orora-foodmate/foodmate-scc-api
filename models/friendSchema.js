@@ -86,7 +86,7 @@ friendSchema.methods.toFriend = function toFriend(userId) {
     ...userItem.toJSON(),
     ...friendItem,
     friendId: this.id,
-    creator: this.creator,
+    friendCreator: this.creator,
    };
 }
 
