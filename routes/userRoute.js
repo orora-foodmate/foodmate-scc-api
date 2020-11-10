@@ -13,7 +13,7 @@ router.get('/:id', tokenVerifyMiddleware, async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      data: user,
+      data: { ...user, creator: undefined },
     });
   } catch (error) {
     return res.status(200).json({

@@ -3,6 +3,7 @@ const { friendModel } = require("../models");
 const isEmpty = require("lodash/isEmpty");
 const { approveFriendTransaction } = require("../helpers/transactions");
 const { getConditionByQuery } = require("../helpers/utils");
+const { publishMessage } = require('../firebaseNotic/app');
 const router = express.Router();
 
 router.get("/", async (req, res) => {
@@ -15,7 +16,13 @@ router.get("/", async (req, res) => {
       ...condition,
     });
 
-    const result = friends.map(item => item.toFriend(user._id.toString()));
+    const result = friends.map(item => {
+      return {
+        ...item.toFriend(user._id.toString()),
+        regId: undefined,
+        creator: undefined,
+      };
+    });
 
     return res.status(200).json({
       success: true,
@@ -38,13 +45,24 @@ router.post("/approve/:friendId", async (req, res) => {
     const friendResult = await approveFriendTransaction(user._id, friendId);
 
     // Todo: 如果未來ws 拆出去要透過 exchange 溝通 services
-    const targetUser= friendResult.users.find(u => u.id.toString() !== authUserId);
+    const targetUser = friendResult.users.find(u => u.id.toString() !== authUserId);
     const userId = targetUser.id.toString();
     req.exchange.transmitPublish(`friend.approveFriend.${userId}`, friendResult.toFriend(userId));
 
+    const friend = friendResult.toFriend(req.user._id.toString());
+
+    //Todo: 透過 exchange 溝通 notification
+    const { regId } = friend;
+    publishMessage({ token: regId, notification: { title: '已經接受交友邀請', body: `${friend.friendCreator.name} 已經成為朋友` } });
+
+
     return res.status(200).json({
       success: true,
-      data: friendResult.toFriend(authUserId),
+      data: {
+        ...friend,
+        regId: undefined,
+        creator: undefined,
+      },
     });
   } catch (error) {
     return res.status(500).json({
@@ -66,15 +84,26 @@ router.post("/reject/:friendId", async (req, res) => {
     oldRecord.status = 0;
     const result = await oldRecord.save();
 
-    
+
     // Todo: 如果未來ws 拆出去要透過 exchange 溝通 services
-    const targetUser= oldRecord.users.find(u => u.id.toString() !== req.user._id.toString());
+    const targetUser = oldRecord.users.find(u => u.id.toString() !== req.user._id.toString());
     const userId = targetUser.id.toString();
     req.exchange.transmitPublish(`friend.rejectFriend.${userId}`, oldRecord.toFriend(userId));
 
+    const friend = result.toFriend(req.user._id.toString());
+
+    //Todo: 透過 exchange 溝通 notification
+    const { regId } = friend;
+    publishMessage({ token: regId, notification: { title: '交友邀請已被取消', body: `${friend.friendCreator.name} 取消交友邀請` } });
+
+
     return res.status(200).json({
       success: true,
-      data: result.toFriend(req.user._id.toString()),
+      data: {
+        ...friend,
+        regId: undefined,
+        creator: undefined
+      },
     });
   } catch (error) {
     return res.status(500).json({
@@ -112,16 +141,25 @@ router.post("/invite/:userId", async (req, res) => {
       }
     }
 
-    const friend = await friendModel.findFriendByUsers(userId, creatorString);
-
+    const friendRecord = await friendModel.findFriendByUsers(userId, creatorString);
+    const friend = friendRecord.toFriend(creatorString);
+    const { regId } = friend;
     // Todo: 如果未來ws 拆出去要透過 exchange 溝通 services
-    req.exchange.transmitPublish(`friend.inviteFriend.${userId}`, friend.toFriend(userId));
+    req.exchange.transmitPublish(`friend.inviteFriend.${userId}`, friendRecord.toFriend(userId));
+
+    //Todo: 透過 exchange 溝通 notification
+    publishMessage({ token: regId, notification: { title: '您收到一個交友邀請', body: `${friend.friendCreator.name} 發送邀請` } });
 
     return res.status(200).json({
       success: true,
-      data: friend.toFriend(creatorString),
+      data: {
+        ...friend,
+        regId: undefined,
+        creator: undefined,
+      },
     });
   } catch (error) {
+    console.log('error', error)
     return res.status(500).json({
       success: false,
       data: { message: error.message },

@@ -40,7 +40,10 @@ stan.on('connect', function () {
     subscription.on("message", async function (msg) {
       try {
         const item = JSON.parse(msg.getData());
-        await messagingInstance.send(item);
+        if(item.notification) {
+          await messagingInstance.send(item); 
+        }
+        
         indexItem.sequence = msg.getSequence();
         indexItem.save();
         msg.ack();
@@ -50,3 +53,18 @@ stan.on('connect', function () {
     });
   });
 });
+
+const publishMessage = (message) => {
+  return new Promise((resolve, reject) => {
+    stan.publish(CHANNEL_ID, JSON.stringify(message), (err, guid) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(guid);
+      }
+    });
+  })
+  
+}
+
+module.exports.publishMessage = publishMessage;
