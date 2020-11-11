@@ -2,10 +2,10 @@
 
 @domain = {{DEV}}
 @jsonContentType = application/json
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjczMDM4YWEzODU4ZmIxOTUzM2YxMTMiLCJhY2NvdW50IjoiaG9yc2VraXQxOTgyQGdtYWlsLmNvbSIsImF2YXRhciI6Imh0dHA6Ly9jbGlwYXJ0LWxpYnJhcnkuY29tL2ltYWdlcy82Y3BveTc4cmkucG5nIiwibmFtZSI6InRvbWFzMSIsImlhdCI6MTYwMzE4NzIyM30.Gieeh58KkFb7xCkbUOVfbHMua6r-v5Wk62nwwCc4G4s
-@userId = 5f86b4e39877615b95f5ced1
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Zjc0MzJmZGQyMDQ4ZDEzMDE2NzdiZTMiLCJhY2NvdW50IjoiaG9yc2VraXQxOTgyQGdtYWlsLmNvbSIsImF2YXRhciI6Imh0dHA6Ly9jbGlwYXJ0LWxpYnJhcnkuY29tL2ltYWdlcy82Y3BveTc4cmkucG5nIiwibmFtZSI6InRvbWFzMSIsImlhdCI6MTYwMjYwODEzNH0.fX4Ls5KIZ5E2S6seTEpWFEgkeQMk70mDSN0iyvGhQFg
+@userId = 5f73037ca3858fb19533f111
 @friendId = 5f73038aa3858fb19533f113
-@roomId = 5f8420cccd899f2a59f24fe6
+@roomId = 5f743349d2048d1301677be6
 
 ### public route
 GET {{domain}}health-check
@@ -17,7 +17,7 @@ POST {{domain}}login
 Content-Type: {{jsonContentType}}
 
 {
-  "account": "thomaslin0710@gmail.com",
+  "account": "edmond@gmail.com",
   "password": "a12345678"
 }
 
@@ -26,9 +26,19 @@ POST {{domain}}users
 Content-Type: {{jsonContentType}}
 
 {
-  "name": "tomas11",
+  "name": "edmoncddfvfv",
   "password": "a12345678",
-  "account": "thomaslin0719@gmail.com"
+  "account": "edmcdofvfvnd@gmail.com"
+}
+
+### updat user
+PATCH {{domain}}users
+Content-Type: {{jsonContentType}}
+Authorization: Bearer {{token}}
+
+{
+  "id": "5f881c76a196f75b4338bd83",
+  "name": "edmond444"
 }
 
 ### get user by id
@@ -37,7 +47,7 @@ Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
 ### get friends
-GET {{domain}}friends
+GET {{domain}}friends?updateAt=2020-11-07%2011%3A41%3A18
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
@@ -68,7 +78,7 @@ Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
 {
-  "text": "test content from thomaslin0710",
+  "text": "test content",
   "image": "https://miro.medium.com/max/3760/1*OEnS6-DEn56szCwdOs2mrA.jpeg",
   "attachment": "https://ia801309.us.archive.org/5/items/HandbookOfNeuralComputingApplicationsPDFStormRG/Node.js%20Design%20Patterns%20-%20Casciaro,%20Mario%20%5BPDF%5D%5BStormRG%5D.pdf"
 }
