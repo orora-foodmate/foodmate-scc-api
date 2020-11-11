@@ -1,30 +1,22 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const isNull = require('lodash/isNull');
+const yup = require('yup');
+const { userModel } = require('../models');
 const pick = require("lodash/pick");
 const router = express.Router();
 const tokenVerifyMiddleware = require('../helpers/tokenVerify');
-const { userModel, friendModel } = require('../models');
 const { agServer } = require("../helpers/agServerCreator");
 const { createNewUserStatus } = require('../onLineState/app');
-
+const { getUserByUserIds } = require('../helpers/mongooseHelper');
 
 router.get('/:id', tokenVerifyMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
-    const [user, friend = null] = await Promise.all([
-      userModel.findById(id, { password: false, hashPassword: false }),
-      friendModel.findFriendByUsers(id, req.user._id.toString())
-    ]);
-
-    const [status, creator, friendId] = isNull(friend)
-    ? [0, null, null]
-    : [friend.status, friend.creator, friend.id];
-    console.log("friend", friend)
+    const user = await getUserByUserIds(req.user._id.toString(), id);
 
     return res.status(200).json({
       success: true,
-      data: { ...user.toJSON(), friendId, status, friendCreatorId: creator }
+      data: { ...user, creator: undefined },
     });
   } catch (error) {
     return res.status(200).json({
@@ -35,8 +27,16 @@ router.get('/:id', tokenVerifyMiddleware, async (req, res) => {
 
 });
 
-router.post('/', async (req, res, next) => {
+const createNewUserSchema = yup.object().shape({
+  account: yup.string().required("account 不可為空"),
+  name: yup.string().required("name 不可為空"),
+  password: yup.string().required("password 不可為空"),
+});
+
+router.post('/', async (req, res) => {
   try {
+    await createNewUserSchema.validate(req.body);
+
     const { name, password, account } = req.body;
     const id = mongoose.Types.ObjectId();
     const user = new userModel({
@@ -50,7 +50,7 @@ router.post('/', async (req, res, next) => {
     // 之後要拆出 micro service 控制 online status 時使用
     // await req.exchange.invokePublish('createNewUserStatus', { userId: id });
 
-    const myTokenData = pick(user, ["_id", "account", "avatar", "name"]);
+    const myTokenData = pick(user, ["id", "account", "avatar", "name"]);
     const signedTokenString = await agServer.auth.signToken(
       myTokenData,
       agServer.signatureKey

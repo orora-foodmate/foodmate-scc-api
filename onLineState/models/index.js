@@ -8,12 +8,6 @@ const TaskIndexes = redisSchema.define("taskIndexes", {
   sequence: { type: redisSchema.Number, default: 0 },
 });
 
-
-TaskIndexes.afterUpdate = function (next) {
-  this.save();
-  next();
-};
-
 const User = redisSchema.define("users", {
   id: { type: redisSchema.String, unique: true, index: true, require: true },
   socketId: { type: redisSchema.String, index: true, default: "" },

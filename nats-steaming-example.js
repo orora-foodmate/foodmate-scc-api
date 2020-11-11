@@ -36,23 +36,16 @@ stan.on("connect", function () {
     return item;
   };
   TaskIndexes.findOne({ where: { id: "foo" } }, (error, item) => {
-  console.log("item", item)
-  console.log("error", error)
     const indexItem = getIndexItem(item);
 
     const opts = stan.subscriptionOptions().setDeliverAllAvailable();
     opts.setManualAckMode(true);
     opts.setAckWait(60 * 1000); // 60s
     opts.setStartAtSequence(indexItem.sequence);
-    console.log("indexItem.sequence", indexItem.sequence)
 
     const subscription = stan.subscribe("foo", "foo.workers", opts);
     
     subscription.on("message", function (msg) {
-      console.log(
-        "Received a message [" + msg.getSequence() + "] " + msg.getData()
-      );
-
       indexItem.sequence = indexItem.sequence + 1;
       console.log("indexItem", indexItem)
       indexItem.save();

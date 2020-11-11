@@ -12,13 +12,19 @@ GET {{domain}}health-check
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
 
+### Logout 
+POST {{domain}}logout
+Authorization: Bearer {{token}}
+Content-Type: {{jsonContentType}}
+
 ### Login username:password
 POST {{domain}}login
 Content-Type: {{jsonContentType}}
 
 {
-  "account": "edmond@gmail.com",
-  "password": "a12345678"
+  "account": "horse kit1982@gmail.com",
+  "password": "a12345678",
+  "regId": "abcd"
 }
 
 ### register user
@@ -88,5 +94,69 @@ Authorization: Bearer {{token}}
 GET {{domain}}rooms?updateAt=2020-10-12 17:24:28.83
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
+
+
+### create event
+
+POST {{domain}}events
+Content-Type: {{jsonContentType}}
+Authorization: Bearer {{token}}
+
+{
+  "title": "event title11",
+  "logo": "https://dyl80ryjxr1ke.cloudfront.net/external_assets/hero_examples/hair_beach_v1785392215/original.jpeg",
+  "publicationPlace": "台北",
+  "description": "description bbb",
+  "meetingGeoJson": {
+    "type": "Point",
+    "coordinates": [
+      121.35355353355406,
+      25.046982934609268
+    ]
+  },
+  "type": 0,
+  "status": 0,
+  "paymentMethod": 0,
+  "budget": 100,
+  "finalReviewAt" : "2020-11-06 11:23:22",
+  "datingAt" : "2020-11-09 11:23:22"
+}
+
+### get events
+GET {{domain}}events?updateAt=2020-11-06 11:26:34
+Content-Type: {{jsonContentType}}
+Authorization: Bearer {{token}}
+
+### join event
+POST {{domain}}events/5fa4fb65de118b078235af7c
+Content-Type: {{jsonContentType}}
+Authorization: Bearer {{token}}
+
+### leave event
+POST {{domain}}events/leave/5fa4fb65de118b078235af7c
+Content-Type: {{jsonContentType}}
+Authorization: Bearer {{token}}
+
+###
+
+### validate event user
+POST {{domain}}events/5fa4fb65de118b078235af7c/validate/5f86c23259b73f5e40c2fed4
+Content-Type: {{jsonContentType}}
+Authorization: Bearer {{token}}
+
+### get comments with event
+GET {{domain}}events/5fa4fb65de118b078235af7c/comments?updateAt=2020-11-06 18:26:34
+Content-Type: {{jsonContentType}}
+Authorization: Bearer {{token}}
+# 2020-11-06 16:59:46
+### add comment with event
+
+POST {{domain}}events/5fa4fb65de118b078235af7c/comments
+Content-Type: {{jsonContentType}}
+Authorization: Bearer {{token}}
+
+{
+  "content": "test content2"
+}
 
 ###
