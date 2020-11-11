@@ -13,7 +13,7 @@ const userSchema = new Schema({
   },
   avatar: {
     type: String,
-    default: "http://clipart-library.com/images/6cpoy78ri.png",
+    default: "https://imgur.com/gallery/ttiBTrv",
   },
   creator: {
     type: Schema.Types.ObjectId,
