@@ -43,7 +43,7 @@ router.post('/login', async (req, res) => {
     user.regId = regId;
     await user.save();
 
-    const myTokenData = pick(user, ["_id", "account", "avatar", "name"]);
+    const myTokenData = pick(user, ["id", "account", "avatar", "name"]);
     const signedTokenString = await agServer.auth.signToken(
       myTokenData,
       agServer.signatureKey
