@@ -69,6 +69,10 @@ const eventSchema = new Schema(
       type: String,
       required: true,
     },
+    room: {
+      type: Schema.Types.ObjectId,
+      default: mongoose.Types.ObjectId(),
+    },
     publicationPlace: {
       type: String,
       required: true,
