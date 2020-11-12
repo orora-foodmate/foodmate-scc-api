@@ -106,6 +106,10 @@ const eventSchema = new Schema(
       enum: [0, 1, 2], //[0: 休閒, 1: 活動, 2: 商業]
       default: 0,
     },
+    userCountMax: {
+      type: Number,
+      default: 0,
+    },
     status: {
       type: Number,
       enum: [0, 1, 2], //[0: 已建立, 1: 已滿團, 2: 已結束]

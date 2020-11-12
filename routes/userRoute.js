@@ -12,7 +12,7 @@ const { getUserByUserIds } = require('../helpers/mongooseHelper');
 router.get('/:id', tokenVerifyMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await getUserByUserIds(req.user._id.toString(), id);
+    const user = await getUserByUserIds(req.user.id.toString(), id);
 
     return res.status(200).json({
       success: true,

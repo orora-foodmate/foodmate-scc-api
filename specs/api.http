@@ -98,6 +98,7 @@ Authorization: Bearer {{token}}
   "logo": "https://dyl80ryjxr1ke.cloudfront.net/external_assets/hero_examples/hair_beach_v1785392215/original.jpeg",
   "publicationPlace": "台北",
   "description": "description bbb",
+  "userCountMax": 10,
   "meetingGeoJson": {
     "type": "Point",
     "coordinates": [

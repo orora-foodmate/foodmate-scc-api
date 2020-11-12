@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
     const condition = getConditionByQuery(req.query);
     const { user } = req;
     const rooms = await roomModel
-      .find({ users: { $in: [user._id] }, ...condition })
+      .find({ users: { $in: [user.id] }, ...condition })
       .populate({ path: "users", select: "account name avatar" })
       .populate({ path: "creator", select: "account name avatar" })
       .exec();
