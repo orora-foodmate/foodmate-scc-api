@@ -6,8 +6,9 @@ const { now, formatDateTime } = require("../helpers/dateHelper");
 const isEmpty = require('lodash/isEmpty');
 const isAfter = require('date-fns/isAfter');
 const parseISO = require('date-fns/parseISO');
-parseISO
-const userSelectFields = 'account name avatar room';
+
+const userSelectFields = '-password -hashPassword';
+const creatorSelectFields = ['avatar', 'phone', 'gender', 'name', 'account', 'id'];
 
 const eventUserSchema = new Schema({
   info: {
@@ -170,14 +171,14 @@ eventSchema.pre('save', function (next) {
 eventSchema.statics.findEvent = function findEvent(query, options) {
   return this.findOne(query, options, '-tags -comments')
     .populate({ path: "users.info", select: userSelectFields })
-    .populate({ path: "creator", select: userSelectFields })
+    .populate({ path: "creator", select: creatorSelectFields.join(' ') })
     .exec();
 };
 
 eventSchema.statics.findEventById = function findEventById(eventId) {
   return this.findById(eventId, '-tags -comments')
     .populate({ path: "users.info", select: userSelectFields })
-    .populate({ path: "creator", select: userSelectFields })
+    .populate({ path: "creator", select: creatorSelectFields.join(' ') })
     .exec();
 };
 
@@ -188,7 +189,7 @@ eventSchema.statics.findEvents = function findEvents(
 ) {
   return this.find(query, options, '-tags -comments')
     .populate({ path: "users.info", select: userSelectFields })
-    .populate({ path: "creator", select: userSelectFields })
+    .populate({ path: "creator", select: creatorSelectFields.join(' ') })
     .exec();
 };
 
