@@ -101,6 +101,10 @@ const eventSchema = new Schema(
         required: true,
       },
     },
+    userCountMax: { // 最高參與人數
+      type: Number,
+      default: 0,
+    },
     type: {
       type: Number,
       enum: [0, 1, 2], //[0: 休閒, 1: 活動, 2: 商業]
