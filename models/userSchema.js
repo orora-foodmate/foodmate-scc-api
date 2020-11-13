@@ -13,7 +13,7 @@ const userSchema = new Schema({
   },
   avatar: {
     type: String,
-    default: "https://imgur.com/gallery/ttiBTrv",
+    default: "https://i.imgur.com/Xou2xzT.png",
   },
   creator: {
     type: Schema.Types.ObjectId,
