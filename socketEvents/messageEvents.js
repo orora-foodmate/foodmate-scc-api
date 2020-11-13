@@ -17,7 +17,7 @@ const getMessagesListener = async (socket) => {
       if (isEmpty(room)) {
         throw new Error("房間不存在")
       }
-      if (!room.users.includes(user._id)) {
+      if (!room.users.includes(user.id)) {
         throw new Error("只有房間成員才能查詢訊息");
       }
 

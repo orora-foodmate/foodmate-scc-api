@@ -6,8 +6,9 @@ const { now, formatDateTime } = require("../helpers/dateHelper");
 const isEmpty = require('lodash/isEmpty');
 const isAfter = require('date-fns/isAfter');
 const parseISO = require('date-fns/parseISO');
-parseISO
-const userSelectFields = 'account name avatar room';
+
+const userSelectFields = '-password -hashPassword';
+const creatorSelectFields = ['avatar', 'phone', 'gender', 'name', 'account', 'id'];
 
 const eventUserSchema = new Schema({
   info: {
@@ -69,6 +70,10 @@ const eventSchema = new Schema(
       type: String,
       required: true,
     },
+    room: {
+      type: Schema.Types.ObjectId,
+      default: mongoose.Types.ObjectId(),
+    },
     publicationPlace: {
       type: String,
       required: true,
@@ -108,6 +113,10 @@ const eventSchema = new Schema(
     type: {
       type: Number,
       enum: [0, 1, 2], //[0: 休閒, 1: 活動, 2: 商業]
+      default: 0,
+    },
+    userCountMax: {
+      type: Number,
       default: 0,
     },
     status: {
@@ -166,14 +175,14 @@ eventSchema.pre('save', function (next) {
 eventSchema.statics.findEvent = function findEvent(query, options) {
   return this.findOne(query, options, '-tags -comments')
     .populate({ path: "users.info", select: userSelectFields })
-    .populate({ path: "creator", select: userSelectFields })
+    .populate({ path: "creator", select: creatorSelectFields.join(' ') })
     .exec();
 };
 
 eventSchema.statics.findEventById = function findEventById(eventId) {
   return this.findById(eventId, '-tags -comments')
     .populate({ path: "users.info", select: userSelectFields })
-    .populate({ path: "creator", select: userSelectFields })
+    .populate({ path: "creator", select: creatorSelectFields.join(' ') })
     .exec();
 };
 
@@ -184,7 +193,7 @@ eventSchema.statics.findEvents = function findEvents(
 ) {
   return this.find(query, options, '-tags -comments')
     .populate({ path: "users.info", select: userSelectFields })
-    .populate({ path: "creator", select: userSelectFields })
+    .populate({ path: "creator", select: creatorSelectFields.join(' ') })
     .exec();
 };
 

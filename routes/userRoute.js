@@ -12,7 +12,7 @@ const { getUserByUserIds } = require('../helpers/mongooseHelper');
 router.get('/:id', tokenVerifyMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await getUserByUserIds(req.user._id.toString(), id);
+    const user = await getUserByUserIds(req.user.id.toString(), id);
 
     return res.status(200).json({
       success: true,
@@ -37,11 +37,14 @@ router.post('/', async (req, res) => {
   try {
     await createNewUserSchema.validate(req.body);
 
-    const { name, password, account } = req.body;
+    const { name, password, account, email, phone, gender = 0 } = req.body;
     const id = mongoose.Types.ObjectId();
     const user = new userModel({
       _id: id,
       name,
+      email,
+      phone,
+      gender,
       password,
       account
     });

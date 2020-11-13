@@ -12,13 +12,13 @@ router.get("/", async (req, res) => {
     const condition = getConditionByQuery(req.query);
     const friends = await friendModel.findFriends({
       status: { $ne: 0 },
-      users: { $in: [user._id] },
+      users: { $in: [user.id] },
       ...condition,
     });
 
     const result = friends.map(item => {
       return {
-        ...item.toFriend(user._id.toString()),
+        ...item.toFriend(user.id.toString()),
         regId: undefined,
         creator: undefined,
       };
@@ -39,17 +39,17 @@ router.get("/", async (req, res) => {
 router.post("/approve/:friendId", async (req, res) => {
   const { user } = req;
   const { friendId } = req.params;
-  const authUserId = user._id.toString();
+  const authUserId = user.id.toString();
 
   try {
-    const friendResult = await approveFriendTransaction(user._id, friendId);
+    const friendResult = await approveFriendTransaction(user.id, friendId);
 
     // Todo: 如果未來ws 拆出去要透過 exchange 溝通 services
     const targetUser = friendResult.users.find(u => u.id.toString() !== authUserId);
     const userId = targetUser.id.toString();
     req.exchange.transmitPublish(`friend.approveFriend.${userId}`, friendResult.toFriend(userId));
 
-    const friend = friendResult.toFriend(req.user._id.toString());
+    const friend = friendResult.toFriend(req.user.id.toString());
 
     //Todo: 透過 exchange 溝通 notification
     const { regId } = friend;
@@ -86,11 +86,11 @@ router.post("/reject/:friendId", async (req, res) => {
 
 
     // Todo: 如果未來ws 拆出去要透過 exchange 溝通 services
-    const targetUser = oldRecord.users.find(u => u.id.toString() !== req.user._id.toString());
+    const targetUser = oldRecord.users.find(u => u.id.toString() !== req.user.id.toString());
     const userId = targetUser.id.toString();
     req.exchange.transmitPublish(`friend.rejectFriend.${userId}`, oldRecord.toFriend(userId));
 
-    const friend = result.toFriend(req.user._id.toString());
+    const friend = result.toFriend(req.user.id.toString());
 
     //Todo: 透過 exchange 溝通 notification
     const { regId } = friend;
@@ -116,7 +116,7 @@ router.post("/reject/:friendId", async (req, res) => {
 router.post("/invite/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
-    const creatorString = req.user._id.toString();
+    const creatorString = req.user.id.toString();
 
     if (creatorString === userId) {
       throw new Error("邀請者與被邀請者不可相同")
