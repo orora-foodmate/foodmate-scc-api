@@ -63,7 +63,7 @@ router.post('/login', async (req, res) => {
 
 router.post('/logout', tokenVerifyMiddleware, async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user.id;
     const user = await userModel.findById(userId);
     
     user.regId = '';

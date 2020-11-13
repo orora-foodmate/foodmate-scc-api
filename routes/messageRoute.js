@@ -17,7 +17,7 @@ router.get("/:roomId", async (req, res) => {
     if (isEmpty(room)) {
       throw new Error("房間不存在")
     }
-    if (!room.users.includes(user._id)) {
+    if (!room.users.includes(user.id)) {
       throw new Error("只有房間成員才能查詢訊息");
     }
 
@@ -56,7 +56,7 @@ router.post("/:roomId", async (req, res) => {
     if (isEmpty(room)) {
       throw new Error("房間不存在")
     }
-    if (!room.users.includes(user._id)) {
+    if (!room.users.includes(user.id)) {
       throw new Error("只有房間成員才能發送訊息");
     }
 
@@ -65,7 +65,7 @@ router.post("/:roomId", async (req, res) => {
     const createAt = now();
     const newMessage = {
       _id: id,
-      user: user._id,
+      user: user.id,
       createAt,
       ...body,
     };
@@ -93,7 +93,7 @@ router.post("/:roomId", async (req, res) => {
       id: newMessage._id,
       createAt: formatDateTime(createAt),
       user: {
-        id: user._id,
+        id: user.id,
         name: user.name,
         avatar: user.avatar,
       },

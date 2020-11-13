@@ -6,8 +6,18 @@ const { now, formatDateTime } = require("../helpers/dateHelper");
 const isEmpty = require('lodash/isEmpty');
 const isAfter = require('date-fns/isAfter');
 const parseISO = require('date-fns/parseISO');
-parseISO
-const userSelectFields = 'account name avatar room';
+
+const userSelectFields = '-password -hashPassword';
+const creatorSelectFields = ['avatar', 'phone', 'gender', 'name', 'account', 'id'];
+
+const termSchema = new Schema({
+  offset: {
+    type: Number
+  },
+  value: {
+    type: String
+  }
+}, schemaOptions);
 
 const eventUserSchema = new Schema({
   info: {
@@ -69,6 +79,10 @@ const eventSchema = new Schema(
       type: String,
       required: true,
     },
+    room: {
+      type: Schema.Types.ObjectId,
+      default: mongoose.Types.ObjectId(),
+    },
     publicationPlace: {
       type: String,
       required: true,
@@ -83,27 +97,36 @@ const eventSchema = new Schema(
       required: true,
     },
     users: [eventUserSchema],
-    meetingGeoJson: {
-      type: {
+    place: {
+      description: {
         type: String,
-        enum: [
-          "Point",
-          "LineString",
-          "Polygon",
-          "MultiPoint",
-          "MultiPolygon",
-          "GeometryCollection",
-        ],
-        required: true,
       },
-      coordinates: {
-        type: [Number],
-        required: true,
+      place_id: {
+        type: String,
       },
+      structured_formatting: {
+        main_text: {
+          type: String,
+        },
+        secondary_text: {
+          type: String,
+          default: ''
+        }
+      },
+      types: [{ type: String }],
+      terms: [termSchema]
+    },
+    userCountMax: { // 最高參與人數
+      type: Number,
+      default: 0,
     },
     type: {
       type: Number,
       enum: [0, 1, 2], //[0: 休閒, 1: 活動, 2: 商業]
+      default: 0,
+    },
+    userCountMax: {
+      type: Number,
       default: 0,
     },
     status: {
@@ -162,14 +185,14 @@ eventSchema.pre('save', function (next) {
 eventSchema.statics.findEvent = function findEvent(query, options) {
   return this.findOne(query, options, '-tags -comments')
     .populate({ path: "users.info", select: userSelectFields })
-    .populate({ path: "creator", select: userSelectFields })
+    .populate({ path: "creator", select: creatorSelectFields.join(' ') })
     .exec();
 };
 
 eventSchema.statics.findEventById = function findEventById(eventId) {
   return this.findById(eventId, '-tags -comments')
     .populate({ path: "users.info", select: userSelectFields })
-    .populate({ path: "creator", select: userSelectFields })
+    .populate({ path: "creator", select: creatorSelectFields.join(' ') })
     .exec();
 };
 
@@ -180,16 +203,16 @@ eventSchema.statics.findEvents = function findEvents(
 ) {
   return this.find(query, options, '-tags -comments')
     .populate({ path: "users.info", select: userSelectFields })
-    .populate({ path: "creator", select: userSelectFields })
+    .populate({ path: "creator", select: creatorSelectFields.join(' ') })
     .exec();
 };
 
-eventSchema.statics.findComments = async function findComments(eventId, {updateAt}) {
-  const {comments} = await this.findById(eventId, 'comments').exec();
-  if(isEmpty(updateAt)) {
+eventSchema.statics.findComments = async function findComments(eventId, { updateAt }) {
+  const { comments } = await this.findById(eventId, 'comments').exec();
+  if (isEmpty(updateAt)) {
     return comments;
   }
-  
+
   return comments.filter(comment => isAfter(parseISO(comment.updateAt), parseISO(updateAt)));
 };
 

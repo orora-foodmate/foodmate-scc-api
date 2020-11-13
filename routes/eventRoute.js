@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
     const condition = getConditionByQuery(req.query);
 
     const events = await eventModel.findEvents({
-      "users.info": { $in: [user._id] },
+      "users.info": { $in: [user.id] },
       ...condition,
     })
     return res.status(200).json({
@@ -29,7 +29,7 @@ router.get('/', async (req, res) => {
 });
 
 const validateAlreadyJoin = (event, user) => {
-  const result = event.users.find(u => u.info.id.toString() === user._id.toString());
+  const result = event.users.find(u => u.info.id.toString() === user.id.toString());
   return Boolean(result);
 };
 
@@ -48,7 +48,7 @@ router.post('/leave/:eventId', async (req, res) => {
       throw new Error('尚未加入活動');
     }
 
-    await eventModel.update({ _id: eventId }, { $pull: { users: { info: user._id } } });
+    await eventModel.update({ _id: eventId }, { $pull: { users: { info: user.id } } });
     const updatedEvent = await eventModel.findEventById(eventId);
 
     return res.status(200).json({
@@ -74,7 +74,7 @@ router.post('/:eventId/validate/:userId', async (req, res) => {
       throw new Error('活動不存在');
     }
 
-    if (event.creator.id.toString() !== user._id.toString()) {
+    if (event.creator.id.toString() !== user.id.toString()) {
       throw new Error('只有主揪可以審核');
     }
 
@@ -115,7 +115,7 @@ router.post('/:eventId', async (req, res) => {
     }
 
     const eventUser = new eventUserModel({
-      info: user._id,
+      info: user.id,
       status: 0,
     });
     await eventModel.update({ _id: eventId }, { $push: { users: eventUser } });
@@ -139,10 +139,14 @@ const createEventSchema = yup.object().shape({
   users: yup.array(),
   publicationPlace: yup.string().required("publicationPlace 不可為空"),
   description: yup.string().required("description 不可為空"),
-  meetingGeoJson: yup.object({
-    type: yup.string().required("type 不可為空"),
-    coordinates: yup.array().required('meetingGeoJson.coordinates 不可為空'),
-  }).required("meetingGeoJson 不可為空"),
+  place: yup.object({
+    description: yup.string().required("description 不可為空"),
+    place_id: yup.string().required("place_id 不可為空"),
+    structured_formatting: yup.object().shape({
+      main_text: yup.string().required('main_text 不可為空'),
+      secondary_text: yup.string().required('secondary_text 不可為空'),
+    }),
+  }).required("place 不可為空"),
   type: yup.mixed().oneOf([0, 1, 2]),
   status: yup.mixed().oneOf([0, 1, 2]),
   paymentMethod: yup.mixed().oneOf([0, 1, 2]),
@@ -154,18 +158,23 @@ const createEventSchema = yup.object().shape({
 router.post('/', async (req, res) => {
   try {
     const { user, body } = req;
-    const { users = [] } = body;
+    const { users = [], place } = body;
+
     await createEventSchema.validate(body);
     const eventId = mongoose.Types.ObjectId();
 
     await new eventModel({
       ...body,
       _id: eventId,
+      creator: user.id,
       users: [
         ...users.map(userId => ({ info: userId, status: 0 })),
-        { info: user._id, status: 1 },
+        { info: user.id, status: 1 },
       ],
-      creator: user._id
+      place: {
+        terms: [],
+        ...place,
+      }
     }).save();
 
     const result = await eventModel.findEventById(eventId);
@@ -207,7 +216,7 @@ router.post('/:eventId/comments', async (req, res) => {
       createAt: now(),
       updateAt: now(),
       content: body.content,
-      sender: user._id,
+      sender: user.id,
     });
 
     await eventModel.update({ _id: eventId }, { $push: { comments: newComment } });
@@ -217,7 +226,7 @@ router.post('/:eventId/comments', async (req, res) => {
         comment: {
           ...newComment.toJSON(),
           sender: {
-            id: user._id,
+            id: user.id,
             account: user.account,
             avatar: user.avatar,
             name: user.name,
