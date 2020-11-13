@@ -139,10 +139,14 @@ const createEventSchema = yup.object().shape({
   users: yup.array(),
   publicationPlace: yup.string().required("publicationPlace 不可為空"),
   description: yup.string().required("description 不可為空"),
-  meetingGeoJson: yup.object({
-    type: yup.string().required("type 不可為空"),
-    coordinates: yup.array().required('meetingGeoJson.coordinates 不可為空'),
-  }).required("meetingGeoJson 不可為空"),
+  place: yup.object({
+    description: yup.string().required("description 不可為空"),
+    place_id: yup.string().required("place_id 不可為空"),
+    structured_formatting: yup.object().shape({
+      main_text: yup.string().required('main_text 不可為空'),
+      secondary_text: yup.string().required('secondary_text 不可為空'),
+    }),
+  }).required("place 不可為空"),
   type: yup.mixed().oneOf([0, 1, 2]),
   status: yup.mixed().oneOf([0, 1, 2]),
   paymentMethod: yup.mixed().oneOf([0, 1, 2]),
@@ -154,18 +158,23 @@ const createEventSchema = yup.object().shape({
 router.post('/', async (req, res) => {
   try {
     const { user, body } = req;
-    const { users = [] } = body;
+    const { users = [], place } = body;
+
     await createEventSchema.validate(body);
     const eventId = mongoose.Types.ObjectId();
 
     await new eventModel({
       ...body,
       _id: eventId,
+      creator: user.id,
       users: [
         ...users.map(userId => ({ info: userId, status: 0 })),
         { info: user.id, status: 1 },
       ],
-      creator: user.id
+      place: {
+        terms: [],
+        ...place,
+      }
     }).save();
 
     const result = await eventModel.findEventById(eventId);

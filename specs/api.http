@@ -2,7 +2,7 @@
 
 @domain = {{DEV}}
 @jsonContentType = application/json
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmFhMGEyZDIyMTMyMTU2YjgzOTVjOWIiLCJhY2NvdW50IjoiaG9yc2Uga2l0MTk4MkBnbWFpbC5jb20iLCJhdmF0YXIiOiJodHRwOi8vY2xpcGFydC1saWJyYXJ5LmNvbS9pbWFnZXMvNmNwb3k3OHJpLnBuZyIsIm5hbWUiOiJUb21hcyBkZW1vMDAxIiwiaWF0IjoxNjA0OTgwMjEyfQ.rV2rSrTVvxu5pJ67gWCbdLj76lLoss4W0Y3ZupFjD1w
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYWEwYTJkMjIxMzIxNTZiODM5NWM5YiIsImFjY291bnQiOiJob3JzZSBraXQxOTgyQGdtYWlsLmNvbSIsImF2YXRhciI6Imh0dHA6Ly9jbGlwYXJ0LWxpYnJhcnkuY29tL2ltYWdlcy82Y3BveTc4cmkucG5nIiwibmFtZSI6IlRvbWFzIGRlbW8wMDEiLCJpYXQiOjE2MDUyNDI3MzF9.pVUpStIUi1eQnAHZ63vLiE3KUNgLG5nFej6ZdhemrBg
 # @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Zjg2YzIzMjU5YjczZjVlNDBjMmZlZDQiLCJhY2NvdW50IjoidGhvbWFzbGluMDcxOEBnbWFpbC5jb20iLCJhdmF0YXIiOiJodHRwOi8vY2xpcGFydC1saWJyYXJ5LmNvbS9pbWFnZXMvNmNwb3k3OHJpLnBuZyIsIm5hbWUiOiJ0b21hczEwIiwiaWF0IjoxNjA0NjQ5NjY0fQ._s-L9-38vY1dQAQx0YN1XmtUc2K5AZCIQB7Rbpr2kJw
 @userId = 5f73038aa3858fb19533f113
 @friendId = 5f73038aa3858fb19533f113
@@ -98,7 +98,6 @@ Authorization: Bearer {{token}}
 
 
 ### create event
-
 POST {{domain}}events
 Content-Type: {{jsonContentType}}
 Authorization: Bearer {{token}}
@@ -109,12 +108,30 @@ Authorization: Bearer {{token}}
   "publicationPlace": "台北",
   "description": "description bbb",
   "userCountMax": 10,
-  "meetingGeoJson": {
-    "type": "Point",
-    "coordinates": [
-      121.35355353355406,
-      25.046982934609268
-    ]
+  "place": {
+    "description": "台灣台北市中山區中山北路三段這一鍋 台北中山北殿",
+    "place_id": "ChIJffB_qUWpQjQR1JJOXUMkqOw",
+    "structured_formatting": {
+      "main_text": "這一鍋 台北中山北殿",
+      "secondary_text": "台灣台北市中山區中山北路三段"
+    },
+    "terms": [{
+      "offset": 14,
+      "value": "這一鍋 台北中山北殿"
+    }, {
+      "offset": 8,
+      "value": "中山北路三段"
+    }, {
+      "offset": 5,
+      "value": "中山區"
+    }, {
+      "offset": 2,
+      "value": "台北市"
+    }, {
+      "offset": 0,
+      "value": "台灣"
+    }],
+    "types": ["restaurant", "food", "point_of_interest", "establishment"]
   },
   "type": 0,
   "status": 0,

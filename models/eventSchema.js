@@ -10,6 +10,15 @@ const parseISO = require('date-fns/parseISO');
 const userSelectFields = '-password -hashPassword';
 const creatorSelectFields = ['avatar', 'phone', 'gender', 'name', 'account', 'id'];
 
+const termSchema = new Schema({
+  offset: {
+    type: Number
+  },
+  value: {
+    type: String
+  }
+}, schemaOptions);
+
 const eventUserSchema = new Schema({
   info: {
     type: Schema.Types.ObjectId,
@@ -88,23 +97,24 @@ const eventSchema = new Schema(
       required: true,
     },
     users: [eventUserSchema],
-    meetingGeoJson: {
-      type: {
+    place: {
+      description: {
         type: String,
-        enum: [
-          "Point",
-          "LineString",
-          "Polygon",
-          "MultiPoint",
-          "MultiPolygon",
-          "GeometryCollection",
-        ],
-        required: true,
       },
-      coordinates: {
-        type: [Number],
-        required: true,
+      place_id: {
+        type: String,
       },
+      structured_formatting: {
+        main_text: {
+          type: String,
+        },
+        secondary_text: {
+          type: String,
+          default: ''
+        }
+      },
+      types: [{ type: String }],
+      terms: [termSchema]
     },
     userCountMax: { // 最高參與人數
       type: Number,
@@ -197,12 +207,12 @@ eventSchema.statics.findEvents = function findEvents(
     .exec();
 };
 
-eventSchema.statics.findComments = async function findComments(eventId, {updateAt}) {
-  const {comments} = await this.findById(eventId, 'comments').exec();
-  if(isEmpty(updateAt)) {
+eventSchema.statics.findComments = async function findComments(eventId, { updateAt }) {
+  const { comments } = await this.findById(eventId, 'comments').exec();
+  if (isEmpty(updateAt)) {
     return comments;
   }
-  
+
   return comments.filter(comment => isAfter(parseISO(comment.updateAt), parseISO(updateAt)));
 };
 
