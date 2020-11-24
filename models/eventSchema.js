@@ -183,7 +183,7 @@ eventSchema.pre('save', function (next) {
 });
 
 eventSchema.statics.findEvent = function findEvent(query, options) {
-  return this.findOne(query, options, '-tags -comments')
+  return this.findOne(query, '-tags -comments')
     .populate({ path: "users.info", select: userSelectFields })
     .populate({ path: "creator", select: creatorSelectFields.join(' ') })
     .exec();
@@ -199,9 +199,8 @@ eventSchema.statics.findEventById = function findEventById(eventId) {
 
 eventSchema.statics.findEvents = function findEvents(
   query = {},
-  options = {}
 ) {
-  return this.find(query, options, '-tags -comments')
+  return this.find(query, '-tags -comments')
     .populate({ path: "users.info", select: userSelectFields })
     .populate({ path: "creator", select: creatorSelectFields.join(' ') })
     .exec();

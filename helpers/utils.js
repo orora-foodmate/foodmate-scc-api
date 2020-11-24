@@ -16,13 +16,12 @@ const getConditionByQuery = (query, options = {}) => {
     return {}
   }
 
-  console.log('getConditionByQuery -> createAt', createAt)
   if (!isNull(createAt)) {
     const createAtStr = decodeURI(createAt);
     const createAtUTC = zonedTimeToUtc(createAtStr);
     createAtConn = { [createAtKey]: { $gt: createAtUTC } };
   }
-  console.log('getConditionByQuery -> updateAt', updateAt)
+
   if (!isNull(updateAt)) {
     const updateAtStr = decodeURI(updateAt);
     const updateAtUTC = zonedTimeToUtc(updateAtStr);

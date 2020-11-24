@@ -72,6 +72,8 @@ const eventRoute = require('./routes/eventRoute');
 
 const { getMessagesListener } = require("./socketEvents/messageEvents");
 const { getRoomsListener } = require("./socketEvents/roomEvents");
+const { syncDataListener } = require("./socketEvents/syncEvents");
+
 const { activeUserStatus, unActiveUserStatus } = require('./onLineState/app');
 
 expressApp.use("/", authRoute);
@@ -111,7 +113,7 @@ expressApp.get("/health-check", tokenVerifyMiddleware, (req, res) => {
     // }, 10000)
     getMessagesListener(socket);
     getRoomsListener(socket);
-
+    syncDataListener(socket);
     // Handle User Status
     // createNewUserListener(socket);
     
