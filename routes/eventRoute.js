@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
     const condition = getConditionByQuery(req.query);
 
     const events = await eventModel.findEvents({
-      "users.info": { $in: [user.id] },
+      // "users.info": { $in: [user.id] },
       ...condition,
     })
     return res.status(200).json({

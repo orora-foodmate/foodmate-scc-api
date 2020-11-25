@@ -4,7 +4,8 @@ const { eventModel, friendModel } = require('../models');
 
 const syncDataListener = async (socket) => {
   for await (let request of socket.procedure('syncData')) {
-    const { _id: userId } = socket.authToken;
+    const { id: userId } = socket.authToken;
+    
     try {
       const {
         eventMaxCreateAt,
@@ -13,7 +14,7 @@ const syncDataListener = async (socket) => {
         friendMaxUpdateAt,
       } = request.data;
       const events = await eventModel.findEvents({
-        "users.info": { $in: [userId] },
+        // "users.info": { $in: [userId] },
         ...getConditionByQuery({createAt: eventMaxCreateAt, updateAt: eventMaxUpdateAt, or: true})
       });
 

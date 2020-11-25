@@ -182,7 +182,7 @@ eventSchema.pre('save', function (next) {
   next();
 });
 
-eventSchema.statics.findEvent = function findEvent(query, options) {
+eventSchema.statics.findEvent = function findEvent(query) {
   return this.findOne(query, '-tags -comments')
     .populate({ path: "users.info", select: userSelectFields })
     .populate({ path: "creator", select: creatorSelectFields.join(' ') })
