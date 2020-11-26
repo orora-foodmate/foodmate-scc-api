@@ -192,7 +192,7 @@ eventSchema.statics.findEvent = function findEvent(query) {
 eventSchema.statics.findEventById = function findEventById(eventId) {
   return this.findById(eventId, '-tags -comments')
     .populate({ path: "users.info", select: userSelectFields })
-    .populate({ path: "creator", select: creatorSelectFields.join(' ') })
+    .populate({ path: "creator", select: [...creatorSelectFields, 'regId'].join(' ') })
     .exec();
 };
 

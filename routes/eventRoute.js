@@ -51,9 +51,17 @@ router.post('/leave/:eventId', async (req, res) => {
     await eventModel.update({ _id: eventId }, { $pull: { users: { info: user.id } } });
     const updatedEvent = await eventModel.findEventById(eventId);
 
+    const result = updatedEvent.toJSON();
+    result.users = result.users.map(u => {
+      const {regId, ...nextUser} = u;
+      return nextUser;
+    });
+
+    req.exchange.transmitPublish(`event.updated`, result);
+
     return res.status(200).json({
       success: true,
-      data: { event: updatedEvent },
+      data: { event: result },
     });
   } catch (error) {
     return res.status(500).json({
@@ -87,6 +95,8 @@ router.post('/:eventId/validate/:userId', async (req, res) => {
     await event.save();
     const updatedEvent = await eventModel.findEventById(eventId);
 
+    req.exchange.transmitPublish(`event.updated`, event.toJSON());
+
     return res.status(200).json({
       success: true,
       data: { event: updatedEvent },
@@ -118,12 +128,20 @@ router.post('/:eventId', async (req, res) => {
       info: user.id,
       status: 0,
     });
-    await eventModel.update({ _id: eventId }, { $push: { users: eventUser } });
-    const updatedEvent = await eventModel.findEventById(eventId);
+    eventModel.users.push(eventUser);
+    await eventModel.save();
+
+    const result = eventModel.toJSON();
+    result.users = result.users.map(user => {
+      const {regId, ...nextUser} = user;
+      publishMessage({ token: regId, notification: { title: ' 有新成員加入', body: '' } });
+      return nextUser;
+    });
+    req.exchange.transmitPublish(`event.updated`, result);
 
     return res.status(200).json({
       success: true,
-      data: { event: updatedEvent },
+      data: { event: result },
     });
   } catch (error) {
     return res.status(500).json({
@@ -220,19 +238,22 @@ router.post('/:eventId/comments', async (req, res) => {
     });
 
     await eventModel.update({ _id: eventId }, { $push: { comments: newComment } });
+
+    const comment = {
+      ...newComment.toJSON(),
+      sender: {
+        id: user.id,
+        account: user.account,
+        avatar: user.avatar,
+        name: user.name,
+      }
+    };
+
+    req.exchange.transmitPublish(`event.add.comment`, comment.toJSON());
+
     return res.status(200).json({
       success: true,
-      data: {
-        comment: {
-          ...newComment.toJSON(),
-          sender: {
-            id: user.id,
-            account: user.account,
-            avatar: user.avatar,
-            name: user.name,
-          }
-        }
-      },
+      data: { comment },
     });
   } catch (error) {
     return res.status(500).json({
