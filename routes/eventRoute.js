@@ -196,10 +196,13 @@ router.post('/', async (req, res) => {
     }).save();
 
     const result = await eventModel.findEventById(eventId);
+    const event = result.toJSON();
+
+    req.exchange.transmitPublish(`event.created`, event);
 
     return res.status(200).json({
       success: true,
-      data: result,
+      data: event,
     });
   } catch (error) {
     return res.status(500).json({
