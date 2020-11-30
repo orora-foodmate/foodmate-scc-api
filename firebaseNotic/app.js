@@ -64,7 +64,6 @@ const publishMessage = (message) => {
       }
     });
   })
-  
 }
 
 module.exports.publishMessage = publishMessage;

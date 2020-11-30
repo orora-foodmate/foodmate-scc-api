@@ -7,7 +7,7 @@ const isEmpty = require('lodash/isEmpty');
 const isAfter = require('date-fns/isAfter');
 const parseISO = require('date-fns/parseISO');
 
-const userSelectFields = '-password -hashPassword';
+const userSelectFields = '-password -hashPassword -createAt -updateAt';
 const creatorSelectFields = ['avatar', 'phone', 'gender', 'name', 'account', 'id'];
 
 const termSchema = new Schema({

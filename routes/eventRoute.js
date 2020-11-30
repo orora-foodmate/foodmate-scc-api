@@ -115,28 +115,32 @@ router.post('/:eventId', async (req, res) => {
     const { eventId } = req.params;
 
     const event = await eventModel.findEventById(eventId);
+    console.log("🚀 ~ file: eventRoute.js ~ line 119 ~ router.post ~ event.save", event.save)
     if (isEmpty(event)) {
       throw new Error('活動不存在');
     }
-
+    console.log(1);
     const alreadyJoin = validateAlreadyJoin(event, user);
     if (alreadyJoin) {
       throw new Error('已經加入活動');
     }
-
+    console.log(2);
     const eventUser = new eventUserModel({
       info: user.id,
       status: 0,
     });
-    eventModel.users.push(eventUser);
-    await eventModel.save();
+    console.log(3);
+    console.log("event: ", event.save);
+    event.users.push(eventUser);
+    await event.save();
 
-    const result = eventModel.toJSON();
-    result.users = result.users.map(user => {
-      const {regId, ...nextUser} = user;
-      publishMessage({ token: regId, notification: { title: ' 有新成員加入', body: '' } });
-      return nextUser;
-    });
+    const updatedEvent = await eventModel.findEventById(eventId);
+    const result = updatedEvent.toJSON();
+    // result.users = result.users.map(user => {
+    //   const {regId, ...nextUser} = user;
+    //   publishMessage({ token: regId, notification: { title: ' 有新成員加入', body: '' } });
+    //   return nextUser;
+    // });
     req.exchange.transmitPublish(`event.updated`, result);
 
     return res.status(200).json({
@@ -150,7 +154,7 @@ router.post('/:eventId', async (req, res) => {
     });
   }
 });
-
+   
 const createEventSchema = yup.object().shape({
   title: yup.string().required('title 不可為空'),
   logo: yup.string().required("logo 不可為空"),
