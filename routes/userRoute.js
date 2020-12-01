@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const yup = require('yup');
 const { userModel } = require('../models');
 const pick = require("lodash/pick");
+const isEmpty = require("lodash/isEmpty");
 const router = express.Router();
 const tokenVerifyMiddleware = require('../helpers/tokenVerify');
 const { agServer } = require("../helpers/agServerCreator");
@@ -25,6 +26,24 @@ router.get('/:id', tokenVerifyMiddleware, async (req, res) => {
     });
   }
 
+});
+
+router.get('/searchAccount/:account', async (req, res, next) => {
+  const { account } = req.params;
+  try {
+    const [ user ] = await userModel.find({ account });
+
+    if(isEmpty(user)) {
+      return res.status(500).json({ success: false, data: { message: '查無使用者。' } });
+    }
+
+    return  res.status(200).json({
+      success: true,
+      data: user
+    })
+  }catch(error) {
+    return res.status(500).json({ success: false, data: { message: error.message } });
+  }
 });
 
 const createNewUserSchema = yup.object().shape({

@@ -38,6 +38,10 @@ Content-Type: {{jsonContentType}}
   "account": "edmcdofvfvnd@gmail.com"
 }
 
+### find user
+GET {{domain}}users/searchAccount/xxx
+Content-Type: {{jsonContentType}}
+
 ### updat user
 PATCH {{domain}}users
 Content-Type: {{jsonContentType}}
