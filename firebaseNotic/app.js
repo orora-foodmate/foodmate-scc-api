@@ -48,7 +48,6 @@ stan.on('connect', function () {
         indexItem.save();
         msg.ack();
       } catch (error) {
-        console.log('error', error)
       }
     });
   });
@@ -64,7 +63,6 @@ const publishMessage = (message) => {
       }
     });
   })
-  
 }
 
 module.exports.publishMessage = publishMessage;

@@ -8,7 +8,6 @@ stan.on('connect', function () {
 
   const durableSub = stan.subscribe('foo', opts);
   durableSub.on('message', function(msg) {
-    console.log('Received a message: ' + msg.getData());
   });
 
   //... 
@@ -21,7 +20,6 @@ stan.on('connect', function () {
   //
   durableSub = stan.subscribe('foo', opts);
   durableSub.on('message', function(msg) {
-    console.log('Received a message: ' + msg.getData());
   });
 
   // ...
@@ -32,6 +30,5 @@ stan.on('connect', function () {
   // const stan = require('node-nats-streaming').connect('test-cluster', 'client-123');
   const durableSub = stan.subscribe('foo', opts);
   durableSub.on('message', function(msg) {
-    console.log('Received a message: ' + msg.getData());
   });
 });

@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
     const condition = getConditionByQuery(req.query);
 
     const events = await eventModel.findEvents({
-      "users.info": { $in: [user.id] },
+      // "users.info": { $in: [user.id] },
       ...condition,
     })
     return res.status(200).json({
@@ -51,9 +51,17 @@ router.post('/leave/:eventId', async (req, res) => {
     await eventModel.update({ _id: eventId }, { $pull: { users: { info: user.id } } });
     const updatedEvent = await eventModel.findEventById(eventId);
 
+    const result = updatedEvent.toJSON();
+    result.users = result.users.map(u => {
+      const {regId, ...nextUser} = u;
+      return nextUser;
+    });
+
+    req.exchange.transmitPublish(`event.updated`, result);
+
     return res.status(200).json({
       success: true,
-      data: { event: updatedEvent },
+      data: { event: result },
     });
   } catch (error) {
     return res.status(500).json({
@@ -87,6 +95,8 @@ router.post('/:eventId/validate/:userId', async (req, res) => {
     await event.save();
     const updatedEvent = await eventModel.findEventById(eventId);
 
+    req.exchange.transmitPublish(`event.updated`, event.toJSON());
+
     return res.status(200).json({
       success: true,
       data: { event: updatedEvent },
@@ -108,22 +118,29 @@ router.post('/:eventId', async (req, res) => {
     if (isEmpty(event)) {
       throw new Error('活動不存在');
     }
-
     const alreadyJoin = validateAlreadyJoin(event, user);
     if (alreadyJoin) {
       throw new Error('已經加入活動');
     }
-
     const eventUser = new eventUserModel({
       info: user.id,
       status: 0,
     });
-    await eventModel.update({ _id: eventId }, { $push: { users: eventUser } });
+    event.users.push(eventUser);
+    await event.save();
+
     const updatedEvent = await eventModel.findEventById(eventId);
+    const result = updatedEvent.toJSON();
+    // result.users = result.users.map(user => {
+    //   const {regId, ...nextUser} = user;
+    //   publishMessage({ token: regId, notification: { title: ' 有新成員加入', body: '' } });
+    //   return nextUser;
+    // });
+    req.exchange.transmitPublish(`event.updated`, result);
 
     return res.status(200).json({
       success: true,
-      data: { event: updatedEvent },
+      data: { event: result },
     });
   } catch (error) {
     return res.status(500).json({
@@ -132,7 +149,7 @@ router.post('/:eventId', async (req, res) => {
     });
   }
 });
-
+   
 const createEventSchema = yup.object().shape({
   title: yup.string().required('title 不可為空'),
   logo: yup.string().required("logo 不可為空"),
@@ -178,10 +195,13 @@ router.post('/', async (req, res) => {
     }).save();
 
     const result = await eventModel.findEventById(eventId);
+    const event = result.toJSON();
+
+    req.exchange.transmitPublish(`event.created`, event);
 
     return res.status(200).json({
       success: true,
-      data: result,
+      data: event,
     });
   } catch (error) {
     return res.status(500).json({
@@ -220,19 +240,22 @@ router.post('/:eventId/comments', async (req, res) => {
     });
 
     await eventModel.update({ _id: eventId }, { $push: { comments: newComment } });
+
+    const comment = {
+      ...newComment.toJSON(),
+      sender: {
+        id: user.id,
+        account: user.account,
+        avatar: user.avatar,
+        name: user.name,
+      }
+    };
+
+    req.exchange.transmitPublish(`event.add.comment`, comment.toJSON());
+
     return res.status(200).json({
       success: true,
-      data: {
-        comment: {
-          ...newComment.toJSON(),
-          sender: {
-            id: user.id,
-            account: user.account,
-            avatar: user.avatar,
-            name: user.name,
-          }
-        }
-      },
+      data: { comment },
     });
   } catch (error) {
     return res.status(500).json({

@@ -11,22 +11,6 @@ const stan = require("node-nats-streaming").connect("nats-streaming", "test", {
 });
 
 stan.on("connect", function () {
-  // // Simple Publisher (all publishes are async in the node version of the client)
-  // stan.publish('foo', 'Hello node-nats-streaming!!', function(err, guid){
-  //   if(err) {
-  //     console.log('publish failed: ' + err);
-  //   } else {
-  //     console.log('published message with guid: ' + guid);
-  //   }
-  // });
-
-  // stan.publish("foo", "Hello node-nats-streaming!", (err, guid) => {
-  //   if (err) {
-  //     console.log("publish failed: " + err);
-  //   } else {
-  //     console.log("published message with guid: " + guid);
-  //   }
-  // });
   const getIndexItem = (item = null) => {
     if (isNull(item)) {
       const indexItem = new TaskIndexes({ id: "foo", sequence: 0 });
@@ -47,7 +31,6 @@ stan.on("connect", function () {
     
     subscription.on("message", function (msg) {
       indexItem.sequence = indexItem.sequence + 1;
-      console.log("indexItem", indexItem)
       indexItem.save();
       msg.ack();
     });
