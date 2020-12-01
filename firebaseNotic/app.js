@@ -48,7 +48,6 @@ stan.on('connect', function () {
         indexItem.save();
         msg.ack();
       } catch (error) {
-        console.log('error', error)
       }
     });
   });

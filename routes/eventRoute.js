@@ -115,22 +115,17 @@ router.post('/:eventId', async (req, res) => {
     const { eventId } = req.params;
 
     const event = await eventModel.findEventById(eventId);
-    console.log("🚀 ~ file: eventRoute.js ~ line 119 ~ router.post ~ event.save", event.save)
     if (isEmpty(event)) {
       throw new Error('活動不存在');
     }
-    console.log(1);
     const alreadyJoin = validateAlreadyJoin(event, user);
     if (alreadyJoin) {
       throw new Error('已經加入活動');
     }
-    console.log(2);
     const eventUser = new eventUserModel({
       info: user.id,
       status: 0,
     });
-    console.log(3);
-    console.log("event: ", event.save);
     event.users.push(eventUser);
     await event.save();
 

@@ -159,7 +159,6 @@ router.post("/invite/:userId", async (req, res) => {
       },
     });
   } catch (error) {
-    console.log('error', error)
     return res.status(500).json({
       success: false,
       data: { message: error.message },
