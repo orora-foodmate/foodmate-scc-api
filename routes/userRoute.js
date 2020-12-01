@@ -1,16 +1,19 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const yup = require('yup');
-const { userModel } = require('../models');
+const express = require("express");
+const mongoose = require("mongoose");
+const yup = require("yup");
+const { userModel } = require("../models");
 const pick = require("lodash/pick");
 const isEmpty = require("lodash/isEmpty");
 const router = express.Router();
-const tokenVerifyMiddleware = require('../helpers/tokenVerify');
+const tokenVerifyMiddleware = require("../helpers/tokenVerify");
 const { agServer } = require("../helpers/agServerCreator");
-const { createNewUserStatus } = require('../onLineState/app');
-const { getUserByUserIds } = require('../helpers/mongooseHelper');
+const { createNewUserStatus } = require("../onLineState/app");
+const {
+  getUserByUserIds,
+  getUserByUserAccount,
+} = require("../helpers/mongooseHelper");
 
-router.get('/:id', tokenVerifyMiddleware, async (req, res) => {
+router.get("/:id", tokenVerifyMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
     const user = await getUserByUserIds(req.user.id.toString(), id);
@@ -22,27 +25,25 @@ router.get('/:id', tokenVerifyMiddleware, async (req, res) => {
   } catch (error) {
     return res.status(200).json({
       success: true,
-      data: null
+      data: null,
     });
   }
-
 });
 
-router.get('/searchAccount/:account', async (req, res, next) => {
+router.get("/searchAccount/:account", tokenVerifyMiddleware, async (req, res, next) => {
   const { account } = req.params;
   try {
-    const [ user ] = await userModel.find({ account });
+    const user = await getUserByUserAccount(req.user.id.toString(), account);
 
-    if(isEmpty(user)) {
-      return res.status(500).json({ success: false, data: { message: '查無使用者。' } });
-    }
-
-    return  res.status(200).json({
+    return res.status(200).json({
       success: true,
-      data: user
-    })
-  }catch(error) {
-    return res.status(500).json({ success: false, data: { message: error.message } });
+      data: { ...user, creator: undefined },
+    });
+  } catch (error) {
+    return res.status(200).json({
+      success: true,
+      data: null,
+    });
   }
 });
 
@@ -52,7 +53,7 @@ const createNewUserSchema = yup.object().shape({
   password: yup.string().required("password 不可為空"),
 });
 
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     await createNewUserSchema.validate(req.body);
 
@@ -65,7 +66,7 @@ router.post('/', async (req, res) => {
       phone,
       gender,
       password,
-      account
+      account,
     });
     await user.save();
     createNewUserStatus(id);
@@ -82,17 +83,22 @@ router.post('/', async (req, res) => {
       data: {
         ...myTokenData,
         token: signedTokenString,
-      }
+      },
     });
   } catch (error) {
-    return res.status(500).json({ success: false, data: { message: error.message } });
+    return res
+      .status(500)
+      .json({ success: false, data: { message: error.message } });
   }
 });
 
-router.patch('/', tokenVerifyMiddleware, async (req, res, next) => {
+router.patch("/", tokenVerifyMiddleware, async (req, res, next) => {
   try {
     const { name, id } = req.body;
-    const user = userModel.findById(id, { password: false, hashPassword: false })
+    const user = userModel.findById(id, {
+      password: false,
+      hashPassword: false,
+    });
     await user.update({ _id: id, name });
 
     return res.status(200).json({
@@ -100,12 +106,14 @@ router.patch('/', tokenVerifyMiddleware, async (req, res, next) => {
       data: {
         id,
         name: user.name,
-        account: user.account
-      }
+        account: user.account,
+      },
     });
-  }catch(error) {
-    return res.status(500).json({ success: false, data: { message: error.message } });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, data: { message: error.message } });
   }
-})
+});
 
 module.exports = router;

@@ -2,7 +2,7 @@
 
 @domain = {{DEV}}
 @jsonContentType = application/json
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYWEwYTJkMjIxMzIxNTZiODM5NWM5YiIsImFjY291bnQiOiJob3JzZSBraXQxOTgyQGdtYWlsLmNvbSIsImF2YXRhciI6Imh0dHA6Ly9jbGlwYXJ0LWxpYnJhcnkuY29tL2ltYWdlcy82Y3BveTc4cmkucG5nIiwibmFtZSI6IlRvbWFzIGRlbW8wMDEiLCJpYXQiOjE2MDUyNDI3MzF9.pVUpStIUi1eQnAHZ63vLiE3KUNgLG5nFej6ZdhemrBg
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYzYwMzJiYWE0Nzg1MjkxZWIxN2FjYSIsImFjY291bnQiOiJlZG1vbmQxIiwiYXZhdGFyIjoiaHR0cHM6Ly9pLmltZ3VyLmNvbS9Yb3UyeHpULnBuZyIsIm5hbWUiOiJFRE1PTkQxIiwiaWF0IjoxNjA2ODE2OTgxfQ.uvblxt3cBC0x3sEtaAtdeV_Cs6OP8JxoelCqtWlB824
 # @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Zjg2YzIzMjU5YjczZjVlNDBjMmZlZDQiLCJhY2NvdW50IjoidGhvbWFzbGluMDcxOEBnbWFpbC5jb20iLCJhdmF0YXIiOiJodHRwOi8vY2xpcGFydC1saWJyYXJ5LmNvbS9pbWFnZXMvNmNwb3k3OHJpLnBuZyIsIm5hbWUiOiJ0b21hczEwIiwiaWF0IjoxNjA0NjQ5NjY0fQ._s-L9-38vY1dQAQx0YN1XmtUc2K5AZCIQB7Rbpr2kJw
 @userId = 5f73038aa3858fb19533f113
 @friendId = 5f73038aa3858fb19533f113
@@ -23,8 +23,8 @@ POST {{domain}}login
 Content-Type: {{jsonContentType}}
 
 {
-  "account": "horse kit1982@gmail.com",
-  "password": "a12345678",
+  "account": "edmond1",
+  "password": "aa123123",
   "regId": "abcd"
 }
 
@@ -39,8 +39,9 @@ Content-Type: {{jsonContentType}}
 }
 
 ### find user
-GET {{domain}}users/searchAccount/xxx
+GET {{domain}}users/searchAccount/edmond1
 Content-Type: {{jsonContentType}}
+Authorization: Bearer {{token}}
 
 ### updat user
 PATCH {{domain}}users
