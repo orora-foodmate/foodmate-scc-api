@@ -60,7 +60,7 @@ router.post("/:roomId", async (req, res) => {
       throw new Error("只有房間成員才能發送訊息");
     }
 
-    const id = mongoose.Types.ObjectId();
+    const id = new mongoose.Types.ObjectId();
     const date = startOfDay();
     const createAt = now();
     const newMessage = {

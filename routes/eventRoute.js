@@ -178,7 +178,7 @@ router.post('/', async (req, res) => {
     const { users = [], place } = body;
 
     await createEventSchema.validate(body);
-    const eventId = mongoose.Types.ObjectId();
+    const eventId = new mongoose.Types.ObjectId();
 
     await new eventModel({
       ...body,

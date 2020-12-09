@@ -58,7 +58,7 @@ router.post("/", async (req, res) => {
     await createNewUserSchema.validate(req.body);
 
     const { name, password, account, email, phone, gender = 0 } = req.body;
-    const id = mongoose.Types.ObjectId();
+    const id = new mongoose.Types.ObjectId();
     const user = new userModel({
       _id: id,
       name,
