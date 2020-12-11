@@ -144,6 +144,7 @@ router.post("/invite/:userId", async (req, res) => {
     const friendRecord = await friendModel.findFriendByUsers(userId, creatorString);
     const friend = friendRecord.toFriend(creatorString);
     const { regId } = friend;
+
     // Todo: 如果未來ws 拆出去要透過 exchange 溝通 services
     req.exchange.transmitPublish(`friend.inviteFriend.${userId}`, friendRecord.toFriend(userId));
 
