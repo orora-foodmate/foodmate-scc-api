@@ -19,7 +19,6 @@ router.post('/login', async (req, res) => {
     await loginSchema.validate(req.body);
     const { account, password, regId } = req.body;
     const user = await userModel.findOne({ account });
-
     if (isEmpty(user)) {
       return res.status(400).json({
         success: false,
@@ -42,13 +41,13 @@ router.post('/login', async (req, res) => {
 
     user.regId = regId;
     await user.save();
-
     const myTokenData = pick(user, ["id", "account", "avatar", "name"]);
+
     const signedTokenString = await agServer.auth.signToken(
       myTokenData,
       agServer.signatureKey
     );
-
+    console.log(5);
     res.status(200).json({
       success: true,
       data: {
