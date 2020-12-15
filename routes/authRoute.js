@@ -47,7 +47,7 @@ router.post('/login', async (req, res) => {
       myTokenData,
       agServer.signatureKey
     );
-    console.log(5);
+    
     res.status(200).json({
       success: true,
       data: {

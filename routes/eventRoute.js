@@ -89,7 +89,7 @@ router.post('/:eventId/reject/:userId', async (req, res) => {
     if (!alreadyJoin) {
       throw new Error('尚未加入活動');
     }
-    await eventModel.update({ _id: eventId }, { $pull: { users: { info: user.id } } });
+    await eventModel.update({ _id: eventId }, { $pull: { users: { info: userId } } });
     const updatedEvent = await eventModel.findEventById(eventId);
 
     const result = updatedEvent.toJSON();
