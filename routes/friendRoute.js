@@ -113,6 +113,43 @@ router.post("/reject/:friendId", async (req, res) => {
   }
 });
 
+router.post("/delete/:friendId", async (req, res) => {
+  const { friendId } = req.params;
+  try {
+    const oldRecord = await friendModel.findFriendById(friendId);
+
+    console.log('🚀 ~ file: friendRoute.js ~ line 122 ~ router.post ~ oldRecord', oldRecord)
+    if (isEmpty(oldRecord) || oldRecord.status !== 2) {
+      throw new Error("狀態錯誤");
+    }
+
+    oldRecord.status = 0;
+    const result = await oldRecord.save();
+
+
+    // Todo: 如果未來ws 拆出去要透過 exchange 溝通 services
+    const targetUser = oldRecord.users.find(u => u.id.toString() !== req.user.id.toString());
+    const userId = targetUser.id.toString();
+    req.exchange.transmitPublish(`friend.deleteFriend.${userId}`, oldRecord.toFriend(userId));
+
+    const friend = result.toFriend(req.user.id.toString());
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        ...friend,
+        regId: undefined,
+        creator: undefined
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      data: { message: error.message },
+    });
+  }
+});
+
 router.post("/invite/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
