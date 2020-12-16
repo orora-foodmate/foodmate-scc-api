@@ -130,7 +130,11 @@ router.post("/delete/:friendId", async (req, res) => {
     // Todo: 如果未來ws 拆出去要透過 exchange 溝通 services
     const targetUser = oldRecord.users.find(u => u.id.toString() !== req.user.id.toString());
     const userId = targetUser.id.toString();
-    req.exchange.transmitPublish(`friend.deleteFriend.${userId}`, oldRecord.toFriend(userId));
+    req.exchange.transmitPublish(`friend.deleteFriend.${userId}`, {
+      ...result.toFriend(userId),
+      regId: undefined,
+      creator: undefined
+    });
 
     const friend = result.toFriend(req.user.id.toString());
 
