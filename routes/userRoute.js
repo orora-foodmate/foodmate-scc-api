@@ -58,6 +58,17 @@ router.post("/", async (req, res) => {
     await createNewUserSchema.validate(req.body);
 
     const { name, password, account, email, phone, gender = 0 } = req.body;
+    const existedUser = await userModel.findOne({
+      $or: [
+        { account: { $eq: account } },
+        {phone: {$eq: phone}}
+      ]
+    });
+
+    if(!isEmpty(existedUser)) {
+      throw new Error('account 或 phone 重複');
+    }
+
     const id = new mongoose.Types.ObjectId();
     const user = new userModel({
       _id: id,

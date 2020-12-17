@@ -10,6 +10,7 @@ const userSchema = new Schema({
   name: {
     type: String,
     required: true,
+    default: ''
   },
   avatar: {
     type: String,
@@ -42,7 +43,6 @@ const userSchema = new Schema({
   },
   regId: {
     type: String,
-    unique: true,
     default: '',
   },
   gender: {
