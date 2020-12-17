@@ -15,6 +15,10 @@ const userSchema = new Schema({
     type: String,
     default: "https://i.imgur.com/Xou2xzT.png",
   },
+  description: {
+    type: String,
+    default: '希望可以跟大家一起吃吃飯，認識新朋友。',
+  },
   creator: {
     type: Schema.Types.ObjectId,
     ref: 'users' ,
