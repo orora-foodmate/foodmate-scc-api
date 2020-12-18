@@ -9,7 +9,6 @@ const { now } = require('../helpers/dateHelper');
 
 router.get('/', async (req, res) => {
   try {
-    const { user } = req;
     const condition = getConditionByQuery(req.query);
 
     const events = await eventModel.findEvents({
@@ -46,6 +45,10 @@ router.post('/leave/:eventId', async (req, res) => {
     const alreadyJoin = validateAlreadyJoin(event, user);
     if (!alreadyJoin) {
       throw new Error('尚未加入活動');
+    }
+
+    if(event.creator.id.toString() === user.id.toString()) {
+      throw new Error('建立者不能離開群組');
     }
 
     await eventModel.update({ _id: eventId }, { $pull: { users: { info: user.id } } });
@@ -164,7 +167,7 @@ router.post('/:eventId', async (req, res) => {
       throw new Error('已經加入活動');
     }
 
-    if(event.userCountMax >= event.users.length) {
+    if(event.userCountMax <= event.users.length) {
       throw new Error('此團已滿');
     }
 
@@ -177,11 +180,7 @@ router.post('/:eventId', async (req, res) => {
 
     const updatedEvent = await eventModel.findEventById(eventId);
     const result = updatedEvent.toJSON();
-    // result.users = result.users.map(user => {
-    //   const {regId, ...nextUser} = user;
-    //   publishMessage({ token: regId, notification: { title: ' 有新成員加入', body: '' } });
-    //   return nextUser;
-    // });
+
     req.exchange.transmitPublish(`event.updated`, result);
 
     return res.status(200).json({
