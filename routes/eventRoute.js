@@ -89,7 +89,7 @@ router.post('/:eventId/reject/:userId', async (req, res) => {
     if (!alreadyJoin) {
       throw new Error('尚未加入活動');
     }
-    await eventModel.update({ _id: eventId }, { $pull: { users: { info: user.id } } });
+    await eventModel.update({ _id: eventId }, { $pull: { users: { info: userId } } });
     const updatedEvent = await eventModel.findEventById(eventId);
 
     const result = updatedEvent.toJSON();
@@ -158,10 +158,16 @@ router.post('/:eventId', async (req, res) => {
     if (isEmpty(event)) {
       throw new Error('活動不存在');
     }
+
     const alreadyJoin = validateAlreadyJoin(event, user);
     if (alreadyJoin) {
       throw new Error('已經加入活動');
     }
+
+    if(event.userCountMax >= event.users.length) {
+      throw new Error('此團已滿');
+    }
+
     const eventUser = new eventUserModel({
       info: user.id,
       status: 0,
