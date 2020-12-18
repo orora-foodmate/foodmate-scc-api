@@ -229,6 +229,7 @@ router.post('/', async (req, res) => {
       ...body,
       _id: eventId,
       creator: user.id,
+      room: new mongoose.Types.ObjectId(),
       users: [
         ...users.map(userId => ({ info: userId, status: 0 })),
         { info: user.id, status: 1 },
