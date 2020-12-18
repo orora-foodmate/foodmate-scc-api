@@ -105,12 +105,12 @@ router.post("/", async (req, res) => {
 
 router.patch("/", tokenVerifyMiddleware, async (req, res, next) => {
   try {
-    const { name, id } = req.body;
+    const { name, description, id } = req.body;
     const user = userModel.findById(id, {
       password: false,
       hashPassword: false,
     });
-    await user.update({ _id: id, name });
+    await user.update({ _id: id, name, description });
 
     return res.status(200).json({
       success: true,
@@ -118,6 +118,7 @@ router.patch("/", tokenVerifyMiddleware, async (req, res, next) => {
         id,
         name: user.name,
         account: user.account,
+        description: user.description,
       },
     });
   } catch (error) {
