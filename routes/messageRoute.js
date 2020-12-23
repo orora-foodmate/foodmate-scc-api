@@ -64,12 +64,15 @@ router.post("/:roomId", async (req, res) => {
     const { roomId } = req.params;
     const { user, body } = req;
 
-    const room = await friendModel.findOne({ room: roomId });
+    const room = await findRoom(roomId);
     if (isEmpty(room)) {
       throw new Error("房間不存在")
     }
-    if (!room.users.includes(user.id)) {
-      throw new Error("只有房間成員才能發送訊息");
+
+    const userInfo = room.users.find(u => u.info.toString() === user.id.toString());
+
+    if(isEmpty(userInfo) || userInfo.status !== 1) {
+      throw new Error("只有房間成員才能查詢訊息");
     }
 
     const id = new mongoose.Types.ObjectId();

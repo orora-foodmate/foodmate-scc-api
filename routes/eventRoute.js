@@ -137,12 +137,13 @@ router.post('/:eventId/validate/:userId', async (req, res) => {
     event.users[needValidateUserIndex].status = 1;
     await event.save();
     const updatedEvent = await eventModel.findEventById(eventId);
+    const result = updatedEvent.toJSON();
 
-    req.exchange.transmitPublish(`event.updated`, event.toJSON());
+    req.exchange.transmitPublish(`event.updated`, result);
 
     return res.status(200).json({
       success: true,
-      data: { event: updatedEvent },
+      data: { event: result },
     });
   } catch (error) {
     return res.status(500).json({
