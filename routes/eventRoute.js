@@ -9,7 +9,6 @@ const { now } = require('../helpers/dateHelper');
 
 router.get('/', async (req, res) => {
   try {
-    const { user } = req;
     const condition = getConditionByQuery(req.query);
 
     const events = await eventModel.findEvents({
@@ -46,6 +45,10 @@ router.post('/leave/:eventId', async (req, res) => {
     const alreadyJoin = validateAlreadyJoin(event, user);
     if (!alreadyJoin) {
       throw new Error('尚未加入活動');
+    }
+
+    if(event.creator.id.toString() === user.id.toString()) {
+      throw new Error('建立者不能離開群組');
     }
 
     await eventModel.update({ _id: eventId }, { $pull: { users: { info: user.id } } });
@@ -134,12 +137,13 @@ router.post('/:eventId/validate/:userId', async (req, res) => {
     event.users[needValidateUserIndex].status = 1;
     await event.save();
     const updatedEvent = await eventModel.findEventById(eventId);
+    const result = updatedEvent.toJSON();
 
-    req.exchange.transmitPublish(`event.updated`, event.toJSON());
+    req.exchange.transmitPublish(`event.updated`, result);
 
     return res.status(200).json({
       success: true,
-      data: { event: updatedEvent },
+      data: { event: result },
     });
   } catch (error) {
     return res.status(500).json({
@@ -164,7 +168,7 @@ router.post('/:eventId', async (req, res) => {
       throw new Error('已經加入活動');
     }
 
-    if(event.userCountMax >= event.users.length) {
+    if(event.userCountMax <= event.users.length) {
       throw new Error('此團已滿');
     }
 
@@ -177,11 +181,7 @@ router.post('/:eventId', async (req, res) => {
 
     const updatedEvent = await eventModel.findEventById(eventId);
     const result = updatedEvent.toJSON();
-    // result.users = result.users.map(user => {
-    //   const {regId, ...nextUser} = user;
-    //   publishMessage({ token: regId, notification: { title: ' 有新成員加入', body: '' } });
-    //   return nextUser;
-    // });
+
     req.exchange.transmitPublish(`event.updated`, result);
 
     return res.status(200).json({
@@ -230,6 +230,7 @@ router.post('/', async (req, res) => {
       ...body,
       _id: eventId,
       creator: user.id,
+      room: new mongoose.Types.ObjectId(),
       users: [
         ...users.map(userId => ({ info: userId, status: 0 })),
         { info: user.id, status: 1 },
