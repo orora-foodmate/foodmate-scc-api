@@ -76,8 +76,19 @@ const eventSchema = new Schema(
       required: true,
     },
     logo: {
-      type: String,
-      required: true,
+      id: {
+        type: String,
+      },
+      deletehash: {
+        type: String,
+      },
+      type: {
+        type: String,
+      },
+      url: {
+        type: String,
+        required: true,
+      }
     },
     room: {
       type: Schema.Types.ObjectId,
