@@ -196,9 +196,16 @@ router.post('/:eventId', async (req, res) => {
   }
 });
 
+const logoSchema = yup.object().shape({
+  deletehash: yup.string(),
+  id: yup.string(),
+  type: yup.string(),
+  url: yup.string().url().typeError('錯誤的圖片連結').required('請上傳活動照片'),
+});
+
 const createEventSchema = yup.object().shape({
   title: yup.string().required('title 不可為空'),
-  logo: yup.string().required("logo 不可為空"),
+  logo: logoSchema,
   users: yup.array(),
   publicationPlace: yup.string().required("publicationPlace 不可為空"),
   description: yup.string().required("description 不可為空"),
