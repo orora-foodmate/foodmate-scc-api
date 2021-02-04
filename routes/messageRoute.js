@@ -8,30 +8,47 @@ const { messageModel, friendModel, eventModel } = require("../models");
 
 const router = express.Router();
 
+const verifyIsFriend = (currentUser, room) => {
+console.log("TCL ~ file: messageRoute.js ~ line 12 ~ verifyIsFriend ~ room", room)
+  const userId = room.users.find(u => u.toString() === currentUser.id.toString());
+
+  if (isEmpty(userId) || room.status !== 2) {
+    throw new Error("只有朋友才能傳送信息");
+  }
+};
+
+const verifyIsRoom = (currentUser, room) => {
+  const userId = room.users.find(u => u.info.toString() === currentUser.id.toString());
+  if (isEmpty(userId) || userId.status !== 1) {
+    throw new Error("只有房間成員才能查詢訊息");
+  }
+}
+
 const findRoom = async (roomId) => {
   const [friendRoom = null, eventRoom = null] = await Promise.all([
     friendModel.findOne({ room: roomId }),
     eventModel.findOne({ room: roomId })
   ]);
 
-  if(isNull(friendRoom) && isNull(eventRoom)) return null;
-  return isNull(friendRoom) ? eventRoom: friendRoom;
+  if (isNull(friendRoom) && isNull(eventRoom)) return null;
+
+  return isNull(friendRoom)
+    ? { type: 'event', room: eventRoom }
+    : { type: 'friend', room: friendRoom };
 }
 router.get("/:roomId", async (req, res) => {
   try {
     const { roomId } = req.params;
     const { user } = req;
 
-    const room = await findRoom(roomId);
+    const {type, room} = await findRoom(roomId);
     if (isNull(room)) {
       throw new Error("房間不存在")
     }
 
-    const userInfo = room.users.find(u => u.info.toString() === user.id.toString());
-
-    if(isEmpty(userInfo) || userInfo.status !== 1) {
-      throw new Error("只有房間成員才能查詢訊息");
-    }
+    type === 'friend'
+      ? verifyIsFriend(user, room)
+      : verifyIsRoom(user, room);
 
     const condition = getConditionByQuery(req.query);
     const messages = await messageModel.find({
@@ -64,16 +81,15 @@ router.post("/:roomId", async (req, res) => {
     const { roomId } = req.params;
     const { user, body } = req;
 
-    const room = await findRoom(roomId);
+    const {type, room} = await findRoom(roomId);
+
     if (isEmpty(room)) {
       throw new Error("房間不存在")
     }
 
-    const userInfo = room.users.find(u => u.info.toString() === user.id.toString());
-
-    if(isEmpty(userInfo) || userInfo.status !== 1) {
-      throw new Error("只有房間成員才能查詢訊息");
-    }
+    type === 'friend'
+      ? verifyIsFriend(user, room)
+      : verifyIsRoom(user, room);
 
     const id = new mongoose.Types.ObjectId();
     const date = startOfDay();
