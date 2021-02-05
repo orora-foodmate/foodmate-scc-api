@@ -9,7 +9,6 @@ const { messageModel, friendModel, eventModel } = require("../models");
 const router = express.Router();
 
 const verifyIsFriend = (currentUser, room) => {
-console.log("TCL ~ file: messageRoute.js ~ line 12 ~ verifyIsFriend ~ room", room)
   const userId = room.users.find(u => u.toString() === currentUser.id.toString());
 
   if (isEmpty(userId) || room.status !== 2) {
@@ -123,6 +122,7 @@ router.post("/:roomId", async (req, res) => {
       _id: undefined,
       id: newMessage._id,
       createAt: formatDateTime(createAt),
+      room: room.room,
       user: {
         id: user.id,
         name: user.name,
