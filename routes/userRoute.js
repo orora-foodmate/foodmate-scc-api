@@ -61,23 +61,24 @@ router.post("/", async (req, res) => {
     const existedUser = await userModel.findOne({
       $or: [
         { account: { $eq: account } },
-        {phone: {$eq: phone}}
+        { phone: { $eq: phone } }
       ]
     });
 
-    if(!isEmpty(existedUser)) {
+    if (!isEmpty(existedUser)) {
       throw new Error('account 或 phone 重複');
     }
 
     const id = new mongoose.Types.ObjectId();
+
     const user = new userModel({
       _id: id,
       name,
       email,
       phone,
       gender,
-      password,
       account,
+      password,
     });
     await user.save();
     createNewUserStatus(id);
@@ -105,18 +106,26 @@ router.post("/", async (req, res) => {
 
 router.patch("/", tokenVerifyMiddleware, async (req, res, next) => {
   try {
-    const { name, description, id } = req.body;
-    const user = userModel.findById(id, {
+    const { name, avatar, description, id } = req.body;
+
+    const user = await userModel.findById(mongoose.Types.ObjectId(id), {
       password: false,
       hashPassword: false,
     });
-    await user.update({ _id: id, name, description });
+    const updatePayload = {
+      name: isEmpty(name) ? user.name : name,
+      avatar: isEmpty(avatar) ? user.avatar : avatar,
+      description: isEmpty(description) ? user.description : description,
+    }
+
+    await user.update(updatePayload);
 
     return res.status(200).json({
       success: true,
       data: {
         id,
         name: user.name,
+        avatar: user.avatar,
         account: user.account,
         description: user.description,
       },
