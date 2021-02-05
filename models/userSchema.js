@@ -13,8 +13,19 @@ const userSchema = new Schema({
     default: ''
   },
   avatar: {
-    type: String,
-    default: "https://i.imgur.com/Xou2xzT.png",
+    id: {
+      type: String,
+    },
+    deletehash: {
+      type: String,
+    },
+    type: {
+      type: String,
+    },
+    url: {
+      type: String,
+      default: "https://i.imgur.com/Xou2xzT.png",     
+    }
   },
   description: {
     type: String,
