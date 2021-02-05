@@ -57,8 +57,8 @@ router.get("/:roomId", async (req, res) => {
         }
       }
     })
-      .populate({ path: "messages.user", select: "account name" })
-      .exec();
+    .populate({ path: "messages.user", select: "account name avatar" })
+    .exec();
     res.status(200).json({
       success: true,
       data: {
