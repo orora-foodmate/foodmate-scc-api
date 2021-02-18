@@ -291,7 +291,6 @@ AGClientSocket.prototype._handleBrowserUnload = async function () {
       let packet = await consumer.next();
       if (packet.done) break;
       attachUnloadHandler();
-      console.log("🚀 ~ file: socketcluster-client.js ~ line 291 ~ 'connecting'")
     }
   })();
 
@@ -301,7 +300,6 @@ AGClientSocket.prototype._handleBrowserUnload = async function () {
       let packet = await consumer.next();
       if (packet.done) break;
       detachUnloadHandler();
-      console.log("🚀 ~ file: socketcluster-client.js ~ line 291 ~ 'close'")
     }
   })();
 };
