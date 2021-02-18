@@ -23,8 +23,6 @@
     "lodash": "^4.17.20",
     "mongoose": "^5.10.7",
     "morgan": "^1.7.0",
-    "nats": "^1.4.12",
-    "node-nats-streaming": "^0.3.2",
     "nodemon": "^1.18.9",
     "redis": "^3.0.2",
     "sc-errors": "^2.0.1",

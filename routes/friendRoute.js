@@ -3,7 +3,6 @@ const { friendModel } = require("../models");
 const isEmpty = require("lodash/isEmpty");
 const { approveFriendTransaction } = require("../helpers/transactions");
 const { getConditionByQuery } = require("../helpers/utils");
-const { publishMessage } = require('../firebaseNotic/app');
 const router = express.Router();
 
 router.get("/", async (req, res) => {
@@ -53,7 +52,6 @@ router.post("/approve/:friendId", async (req, res) => {
 
     //Todo: 透過 exchange 溝通 notification
     const { regId } = friend;
-    publishMessage({ token: regId, notification: { title: '已經接受交友邀請', body: `${friend.friendCreator.name} 已經成為朋友` } });
 
 
     return res.status(200).json({
@@ -94,7 +92,6 @@ router.post("/reject/:friendId", async (req, res) => {
 
     //Todo: 透過 exchange 溝通 notification
     const { regId } = friend;
-    publishMessage({ token: regId, notification: { title: '交友邀請已被取消', body: `${friend.friendCreator.name} 取消交友邀請` } });
 
 
     return res.status(200).json({
@@ -190,7 +187,6 @@ router.post("/invite/:userId", async (req, res) => {
     req.exchange.transmitPublish(`friend.inviteFriend.${userId}`, friendRecord.toFriend(userId));
 
     //Todo: 透過 exchange 溝通 notification
-    publishMessage({ token: regId, notification: { title: '您收到一個交友邀請', body: `${friend.friendCreator.name} 發送邀請` } });
 
     return res.status(200).json({
       success: true,
